@@ -139,7 +139,7 @@ app.get('/watch/:id', async (req, res) => {
 
     // Free embed sources (TMDB ID based)
     const embeds = [
-      { name: 'ZXC Stream', url: `https://zxcstream.xyz/embed/movie/${id}` },
+      { name: 'ZXC Stream', url: `https://zxcstream.xyz/player/movie/${id}` },
       { name: 'VidSrc Top', url: `https://vid-src.top/embed/movie/${id}` },
       { name: 'MultiEmbed', url: `https://multiembed.mov/?video_id=${id}&tmdb=1` },
       { name: '2Embed', url: `https://www.2embed.cc/embed/${id}` },
