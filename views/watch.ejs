@@ -1,0 +1,102 @@
+<%- include('partials/head') %>
+
+<section class="watch-section">
+  <div class="player-wrap">
+    <div class="player-container">
+      <iframe
+        id="player"
+        src="<%= embeds[0].url %>"
+        allowfullscreen
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen; web-share"
+        webkitallowfullscreen
+        mozallowfullscreen
+        referrerpolicy="no-referrer"
+        frameborder="0"
+        scrolling="no"
+      ></iframe>
+    </div>
+  </div>
+
+  <div class="container watch-meta">
+    <div class="server-bar">
+      <span class="server-label">Servers</span>
+      <div class="servers" id="servers">
+        <% embeds.forEach((e, i) => { %>
+          <button
+            class="server-btn <%= i === 0 ? 'active' : '' %>"
+            data-url="<%= e.url %>"
+            data-index="<%= i %>"
+          ><%= e.name %></button>
+        <% }) %>
+      </div>
+    </div>
+
+    <div class="movie-header">
+      <h1><%= movie.title %></h1>
+      <div class="meta-row">
+        <% if (movie.release_date) { %><span><%= year(movie.release_date) %></span><% } %>
+        <% if (movie.runtime) { %><span><%= movie.runtime %> min</span><% } %>
+        <% if (movie.vote_average) { %><span class="score">★ <%= movie.vote_average.toFixed(1) %></span><% } %>
+        <% if (movie.genres && movie.genres.length) { %>
+          <span class="genres">
+            <% movie.genres.slice(0, 3).forEach(g => { %>
+              <a href="/genre/<%= g.id %>"><%= g.name %></a>
+            <% }) %>
+          </span>
+        <% } %>
+      </div>
+    </div>
+
+    <p class="overview"><%= movie.overview || 'No description available.' %></p>
+
+    <% if (crew.length) { %>
+      <div class="crew">
+        <% crew.forEach(c => { %>
+          <span><strong><%= c.job %>:</strong> <%= c.name %></span>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <% if (trailer) { %>
+      <div class="trailer-section">
+        <h3>Trailer</h3>
+        <div class="trailer-wrap">
+          <iframe src="<%= trailer %>" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+      </div>
+    <% } %>
+
+    <% if (cast.length) { %>
+      <div class="cast-section">
+        <h3>Cast</h3>
+        <div class="cast-grid">
+          <% cast.forEach(p => { %>
+            <div class="cast-card">
+              <img
+                src="<%= img(p.profile_path, 'w185') %>"
+                alt="<%= p.name %>"
+                loading="lazy"
+                onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22185%22 height=%22278%22%3E%3Crect fill=%22%231a1a1a%22 width=%22185%22 height=%22278%22/%3E%3C/svg%3E'"
+              >
+              <span class="cast-name"><%= p.name %></span>
+              <span class="cast-role"><%= p.character %></span>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+
+    <% if (similar.length) { %>
+      <div class="similar-section">
+        <h3>You may also like</h3>
+        <div class="movie-grid">
+          <% similar.forEach(movie => { %>
+            <%- include('partials/movie-card', { movie }) %>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

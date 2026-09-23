@@ -1,0 +1,101 @@
+<%- include('partials/head') %>
+
+<section class="hero-slider" id="heroSlider">
+  <% if (featured && featured.length) { %>
+    <% featured.forEach((movie, i) => { %>
+      <div class="hero-slide<%= i === 0 ? ' active' : '' %>" data-index="<%= i %>"
+           style="background-image: url('<%= img(movie.backdrop_path, 'w1280') %>')">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+          <div class="hero-text">
+            <span class="hero-badge">Featured</span>
+            <h1><%= movie.title %></h1>
+            <div class="hero-meta">
+              <% if (movie.release_date) { %><span><%= year(movie.release_date) %></span><% } %>
+              <% if (movie.vote_average) { %><span class="score">★ <%= movie.vote_average.toFixed(1) %></span><% } %>
+            </div>
+            <p class="hero-overview"><%= (movie.overview || '').slice(0, 160) %><%= (movie.overview || '').length > 160 ? '…' : '' %></p>
+            <div class="hero-actions">
+              <a href="/watch/<%= movie.id %>" class="hero-btn">▶ Watch Now</a>
+              <a href="/watch/<%= movie.id %>" class="hero-btn secondary">More Info</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+
+    <button class="hero-nav prev" id="heroPrev" aria-label="Previous">‹</button>
+    <button class="hero-nav next" id="heroNext" aria-label="Next">›</button>
+
+    <div class="hero-dots" id="heroDots">
+      <% featured.forEach((_, i) => { %>
+        <button class="hero-dot<%= i === 0 ? ' active' : '' %>" data-index="<%= i %>" aria-label="Slide <%= i + 1 %>"></button>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="hero-slide active">
+      <div class="hero-overlay"></div>
+      <div class="container hero-content">
+        <div class="hero-text">
+          <h1>Watch Free Movies Online</h1>
+          <p>HD streaming · No sign-up · Unlimited titles</p>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Popular Now</h2>
+      <a href="/?page=<%= page + 1 %>" class="see-all">More →</a>
+    </div>
+    <div class="movie-grid">
+      <% popular.slice(0, 12).forEach(movie => { %>
+        <%- include('partials/movie-card', { movie }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Top Rated</h2>
+    </div>
+    <div class="movie-grid">
+      <% topRated.slice(0, 12).forEach(movie => { %>
+        <%- include('partials/movie-card', { movie }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Now Playing</h2>
+    </div>
+    <div class="movie-grid">
+      <% nowPlaying.slice(0, 12).forEach(movie => { %>
+        <%- include('partials/movie-card', { movie }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Coming Soon</h2>
+    </div>
+    <div class="movie-grid">
+      <% upcoming.slice(0, 12).forEach(movie => { %>
+        <%- include('partials/movie-card', { movie }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

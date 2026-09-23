@@ -1,0 +1,39 @@
+<%- include('partials/head') %>
+
+<section class="page-header">
+  <div class="container">
+    <h1>Search results for “<%= q %>”</h1>
+    <p><%= totalResults.toLocaleString() %> movies found</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <% if (movies.length === 0) { %>
+      <div class="empty">
+        <p>No movies found. Try a different title.</p>
+        <a href="/" class="btn">Back to Home</a>
+      </div>
+    <% } else { %>
+      <div class="movie-grid">
+        <% movies.forEach(movie => { %>
+          <%- include('partials/movie-card', { movie }) %>
+        <% }) %>
+      </div>
+
+      <% if (totalPages > 1) { %>
+        <div class="pagination">
+          <% if (page > 1) { %>
+            <a href="/search?q=<%= encodeURIComponent(q) %>&page=<%= page - 1 %>" class="page-btn">← Prev</a>
+          <% } %>
+          <span class="page-info">Page <%= page %> of <%= totalPages %></span>
+          <% if (page < totalPages) { %>
+            <a href="/search?q=<%= encodeURIComponent(q) %>&page=<%= page + 1 %>" class="page-btn">Next →</a>
+          <% } %>
+        </div>
+      <% } %>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

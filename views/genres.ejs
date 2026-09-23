@@ -1,0 +1,22 @@
+<%- include('partials/head') %>
+
+<section class="page-header">
+  <div class="container">
+    <h1>All Genres</h1>
+    <p>Browse movies by category</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="genre-grid">
+      <% genres.forEach(g => { %>
+        <a href="/genre/<%= g.id %>" class="genre-card">
+          <span><%= g.name %></span>
+        </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

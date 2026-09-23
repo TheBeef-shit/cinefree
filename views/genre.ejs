@@ -1,0 +1,31 @@
+<%- include('partials/head') %>
+
+<section class="page-header">
+  <div class="container">
+    <h1><%= genre.name %> Movies</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="movie-grid">
+      <% movies.forEach(movie => { %>
+        <%- include('partials/movie-card', { movie }) %>
+      <% }) %>
+    </div>
+
+    <% if (totalPages > 1) { %>
+      <div class="pagination">
+        <% if (page > 1) { %>
+          <a href="/genre/<%= genre.id %>?page=<%= page - 1 %>" class="page-btn">← Prev</a>
+        <% } %>
+        <span class="page-info">Page <%= page %> of <%= totalPages %></span>
+        <% if (page < totalPages) { %>
+          <a href="/genre/<%= genre.id %>?page=<%= page + 1 %>" class="page-btn">Next →</a>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,16 @@
+{
+  "name": "free-movie-site",
+  "version": "1.0.0",
+  "description": "Professional free movie streaming site powered by TMDB + free embeds",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "node-fetch": "^2.7.0"
+  }
+}

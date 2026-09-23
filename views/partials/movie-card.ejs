@@ -1,0 +1,19 @@
+<a href="/watch/<%= movie.id %>" class="movie-card">
+  <div class="poster-wrap">
+    <img
+      src="<%= img(movie.poster_path, 'w342') %>"
+      alt="<%= movie.title %>"
+      loading="lazy"
+      width="342"
+      height="513"
+      onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22342%22 height=%22513%22%3E%3Crect fill=%22%231a1a1a%22 width=%22342%22 height=%22513%22/%3E%3Ctext fill=%22%23555%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22sans-serif%22 font-size=%2218%22%3ENo Poster%3C/text%3E%3C/svg%3E'"
+    >
+    <% if (movie.vote_average) { %>
+      <span class="rating"><%= movie.vote_average.toFixed(1) %></span>
+    <% } %>
+  </div>
+  <div class="card-info">
+    <h3 class="card-title"><%= movie.title %></h3>
+    <span class="card-year"><%= year(movie.release_date) %></span>
+  </div>
+</a>
