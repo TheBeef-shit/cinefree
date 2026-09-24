@@ -12,7 +12,7 @@ if (menuToggle && mobileNav) {
   });
 }
 
-// Server switcher (watch page)
+// Server switcher
 const servers = document.getElementById('servers');
 const player = document.getElementById('player');
 if (servers && player) {
@@ -25,7 +25,23 @@ if (servers && player) {
   });
 }
 
-// Hero slider
+// HTML5 Fullscreen on player
+const fsBtn = document.getElementById('fsBtn');
+const playerBox = document.querySelector('.player-container');
+if (fsBtn && playerBox) {
+  fsBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      (playerBox.requestFullscreen || playerBox.webkitRequestFullscreen || playerBox.msRequestFullscreen)
+        .call(playerBox)
+        .catch(() => {});
+    } else {
+      (document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen)
+        .call(document);
+    }
+  });
+}
+
+// Hero slider (if present)
 (function () {
   const slider = document.getElementById('heroSlider');
   if (!slider) return;
@@ -72,7 +88,6 @@ if (servers && player) {
   slider.addEventListener('mouseenter', stopAuto);
   slider.addEventListener('mouseleave', startAuto);
 
-  // Touch swipe
   let touchStartX = 0;
   slider.addEventListener('touchstart', e => {
     touchStartX = e.changedTouches[0].screenX;
