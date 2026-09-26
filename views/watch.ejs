@@ -71,27 +71,45 @@
     <p class="player-hint">If the video doesn’t load, try another server. Click the player once if ads block the first tap.</p>
 
     <% if (typeof mediaType !== 'undefined' && mediaType === 'tv') { %>
+      <% 
+        const currentSeason = typeof season !== 'undefined' ? Number(season) : 1;
+        const currentEpisode = typeof episode !== 'undefined' ? Number(episode) : 1;
+        const parsedSeasons = (typeof seasonList !== 'undefined' && seasonList.length) 
+          ? seasonList 
+          : Array.from({ length: (typeof seasons !== 'undefined' ? seasons : 1) }, (_, i) => ({ number: i + 1, name: 'Season ' + (i + 1) }));
+        const parsedEpisodes = (typeof episodes !== 'undefined' && episodes.length) ? episodes : [];
+      %>
       <div class="ep-picker">
         <div class="ep-picker-top">
           <label class="server-label" for="seasonSelect">Season</label>
-          <select id="seasonSelect" class="season-select" onchange="location.href='/tv/watch/<%= movie.id %>?s='+this.value+'&e=1'">
-            <% const list = (typeof seasonList !== 'undefined' && seasonList.length) ? seasonList : Array.from({length: seasons||1}, (_,i)=>({number:i+1, name:'Season '+(i+1)})); %>
-            <% list.forEach(s => { %>
-              <option value="<%= s.number %>" <%= s.number === season ? 'selected' : '' %>>
-                <%= s.name || ('Season ' + s.number) %><%= s.episode_count ? ' (' + s.episode_count + ' eps)' : '' %>
+          <select 
+            id="seasonSelect" 
+            class="season-select" 
+            onchange="window.location.href='/tv/watch/<%= movie.id %>?s=' + this.value + '&e=1'"
+          >
+            <% parsedSeasons.forEach(s => { %>
+              <% const sNum = Number(s.number || s.season_number); %>
+              <option value="<%= sNum %>" <%= sNum === currentSeason ? 'selected' : '' %>>
+                <%= s.name || ('Season ' + sNum) %><%= s.episode_count ? ' (' + s.episode_count + ' eps)' : '' %>
               </option>
             <% }) %>
           </select>
-          <span class="ep-current">Now: S<%= season %>E<%= episode %></span>
+          <span class="ep-current">Now: S<%= currentSeason %>E<%= currentEpisode %></span>
         </div>
+
         <div class="ep-grid" id="epGrid">
-          <% (typeof episodes !== 'undefined' ? episodes : []).forEach(ep => { %>
-            <a
-              href="/tv/watch/<%= movie.id %>?s=<%= season %>&e=<%= ep.episode_number %>"
-              class="ep-btn <%= ep.episode_number === episode ? 'active' : '' %>"
-              title="<%= ep.name || ('Episode ' + ep.episode_number) %>"
-            >E<%= ep.episode_number %></a>
-          <% }) %>
+          <% if (parsedEpisodes.length > 0) { %>
+            <% parsedEpisodes.forEach(ep => { %>
+              <% const epNum = Number(ep.episode_number || ep.number); %>
+              <a
+                href="/tv/watch/<%= movie.id %>?s=<%= currentSeason %>&e=<%= epNum %>"
+                class="ep-btn <%= epNum === currentEpisode ? 'active' : '' %>"
+                title="<%= ep.name || ('Episode ' + epNum) %>"
+              >E<%= epNum %></a>
+            <% }) %>
+          <% } else { %>
+            <p class="no-episodes">No episodes available for this season.</p>
+          <% } %>
         </div>
       </div>
     <% } %>
