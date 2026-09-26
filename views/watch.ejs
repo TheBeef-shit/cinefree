@@ -12,8 +12,8 @@
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen *"
         frameborder="0"
         scrolling="no"
+        title="Video player"
       ></iframe>
-      <button type="button" id="fsBtn" class="fs-bypass-btn" title="Toggle Fullscreen">⛶</button>
     </div>
   </div>
 
@@ -36,8 +36,11 @@
       <div class="ep-picker">
         <div class="ep-picker-top">
           <label class="server-label" for="seasonSelect">Season</label>
-          <select id="seasonSelect" class="season-select"
-            onchange="location.href='/tv/watch/<%= movie.id %>?s='+this.value+'&e=1'">
+          <select
+            id="seasonSelect"
+            class="season-select"
+            onchange="location.href='/tv/watch/<%= movie.id %>?s='+this.value+'&e=1'"
+          >
             <% const list = (typeof seasonList !== 'undefined' && seasonList.length)
                  ? seasonList
                  : Array.from({ length: (typeof seasons !== 'undefined' ? seasons : 1) }, (_, i) => ({ number: i + 1, name: 'Season ' + (i + 1) })); %>
@@ -91,7 +94,7 @@
       <div class="trailer-section">
         <h3>Trailer</h3>
         <div class="trailer-wrap">
-          <iframe src="<%= trailer %>" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+          <iframe src="<%= trailer %>" allowfullscreen allow="autoplay; encrypted-media" title="Trailer"></iframe>
         </div>
       </div>
     <% } %>
@@ -133,22 +136,29 @@
 document.addEventListener('DOMContentLoaded', () => {
   const iframe = document.getElementById('player');
   const playerContainer = document.getElementById('playerContainer');
-  const fsBtn = document.getElementById('fsBtn');
   const serverBtns = document.querySelectorAll('.server-btn[data-url]');
 
+  // Server switch
   serverBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       serverBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      iframe.src = btn.getAttribute('data-url');
+      if (iframe) iframe.src = btn.getAttribute('data-url');
     });
   });
 
+  // F key → fullscreen (player area only, no overlay button)
   function toggleFullscreen() {
-    const isFs = document.fullscreenElement || document.webkitFullscreenElement ||
-                 document.mozFullScreenElement || document.msFullscreenElement;
+    const el = playerContainer || iframe;
+    if (!el) return;
+
+    const isFs =
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement;
+
     if (!isFs) {
-      const el = playerContainer;
       if (el.requestFullscreen) el.requestFullscreen();
       else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
       else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
@@ -161,26 +171,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (fsBtn) fsBtn.addEventListener('click', toggleFullscreen);
-  if (playerContainer) playerContainer.addEventListener('dblclick', toggleFullscreen);
-
   document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'f' && !e.target.matches('input, textarea, select')) {
-      e.preventDefault();
-      toggleFullscreen();
-    }
+    if (e.key.toLowerCase() !== 'f') return;
+    if (e.target.matches('input, textarea, select')) return;
+    e.preventDefault();
+    toggleFullscreen();
   });
-
-  const updateFsButton = () => {
-    if (!fsBtn) return;
-    const isFs = document.fullscreenElement || document.webkitFullscreenElement ||
-                 document.mozFullScreenElement || document.msFullscreenElement;
-    fsBtn.innerHTML = isFs ? '✕' : '⛶';
-  };
-  document.addEventListener('fullscreenchange', updateFsButton);
-  document.addEventListener('webkitfullscreenchange', updateFsButton);
-  document.addEventListener('mozfullscreenchange', updateFsButton);
-  document.addEventListener('MSFullscreenChange', updateFsButton);
 });
 </script>
 
