@@ -6,108 +6,44 @@
       <iframe
         id="player"
         src="<%= embeds[0].url %>"
-        allowfullscreen
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen="true"
+        webkitallowfullscreen="true"
+        mozallowfullscreen="true"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen *"
         frameborder="0"
+        scrolling="no"
       ></iframe>
+
+<!-- Fullscreen Bypass Button -->
+      <button id="fsBtn" class="fs-bypass-btn" title="Toggle Fullscreen">
+        ⛶
+      </button>
     </div>
   </div>
 
 <div class="container watch-meta">
-    <!-- Servers -->
     <div class="server-bar">
       <span class="server-label">Servers</span>
       <div class="servers" id="servers">
-        <% embeds.forEach((embed, index) => { %>
-          <button
-            type="button"
-            class="server-btn <%= index === 0 ? 'active' : '' %>"
-            data-url="<%= embed.url %>"
-            data-index="<%= index %>"
+        <% embeds.forEach((e, i) => { %>
+          <button 
+            class="server-btn <%= i === 0 ? 'active' : '' %>" 
+            data-url="<%= e.url %>"
+            data-index="<%= i %>"
           >
-            <%= embed.name %>
+            <%= e.name %>
           </button>
         <% }) %>
-
-<button type="button" id="fsBtn" class="server-btn server-btn--fs">
-          ⛶ Fullscreen
-        </button>
       </div>
     </div>
 
-<!-- TV Season & Episode Selector -->
-    <% if (typeof mediaType !== 'undefined' && mediaType === 'tv') { %>
-      <%
-        const currentSeason = Number(season) || 1;
-        const currentEpisode = Number(episode) || 1;
-        const seasons = (typeof seasonList !== 'undefined' && seasonList.length)
-          ? seasonList
-          : Array.from({ length: Number(seasons) || 1 }, (_, i) => ({
-              number: i + 1,
-              name: `Season ${i + 1}`
-            }));
-        const episodes = (typeof episodes !== 'undefined' && episodes.length) ? episodes : [];
-      %>
-
-<div class="tv-selector">
-        <div class="tv-selector-header">
-          <div class="tv-season-wrapper">
-            <label for="seasonSelect" class="tv-label">Season</label>
-            <select
-              id="seasonSelect"
-              class="tv-season-select"
-              onchange="window.location.href = `/tv/watch/<%= movie.id %>?s=${this.value}&e=1`"
-            >
-              <% seasons.forEach(s => { %>
-                <% const sNum = Number(s.number || s.season_number); %>
-                <option value="<%= sNum %>" <%= sNum === currentSeason ? 'selected' : '' %>>
-                  <%= s.name || `Season ${sNum}` %>
-                  <% if (s.episode_count) { %> (<%= s.episode_count %> eps) <% } %>
-                </option>
-              <% }) %>
-            </select>
-          </div>
-
-<div class="tv-now-playing">
-            Now playing: <strong>S<%= currentSeason %> E<%= currentEpisode %></strong>
-          </div>
-        </div>
-
-<% if (episodes.length > 0) { %>
-          <div class="tv-episodes">
-            <% episodes.forEach(ep => { %>
-              <% const epNum = Number(ep.episode_number || ep.number); %>
-              <a
-                href="/tv/watch/<%= movie.id %>?s=<%= currentSeason %>&e=<%= epNum %>"
-                class="tv-ep <%= epNum === currentEpisode ? 'active' : '' %>"
-                title="<%= ep.name || `Episode ${epNum}` %>"
-              >
-                <%= epNum %>
-              </a>
-            <% }) %>
-          </div>
-        <% } else { %>
-          <p class="tv-no-episodes">No episodes available for this season.</p>
-        <% } %>
-      </div>
-    <% } %>
-
-<!-- Movie / Show Info -->
-    <div class="movie-header">
+<div class="movie-header">
       <h1><%= movie.title %></h1>
-
-<div class="meta-row">
-        <% if (movie.release_date) { %>
-          <span><%= year(movie.release_date) %></span>
-        <% } %>
-        <% if (movie.runtime) { %>
-          <span><%= movie.runtime %> min</span>
-        <% } %>
-        <% if (movie.vote_average) { %>
-          <span class="score">★ <%= movie.vote_average.toFixed(1) %></span>
-        <% } %>
-        <% if (movie.genres?.length) { %>
+      <div class="meta-row">
+        <% if (movie.release_date) { %><span><%= year(movie.release_date) %></span><% } %>
+        <% if (movie.runtime) { %><span><%= movie.runtime %> min</span><% } %>
+        <% if (movie.vote_average) { %><span class="score">★ <%= movie.vote_average.toFixed(1) %></span><% } %>
+        <% if (movie.genres && movie.genres.length) { %>
           <span class="genres">
             <% movie.genres.slice(0, 3).forEach(g => { %>
               <a href="/genre/<%= g.id %>"><%= g.name %></a>
@@ -119,8 +55,7 @@
 
 <p class="overview"><%= movie.overview || 'No description available.' %></p>
 
-<!-- Crew -->
-    <% if (crew?.length) { %>
+<% if (crew.length) { %>
       <div class="crew">
         <% crew.forEach(c => { %>
           <span><strong><%= c.job %>:</strong> <%= c.name %></span>
@@ -128,8 +63,7 @@
       </div>
     <% } %>
 
-<!-- Trailer -->
-    <% if (trailer) { %>
+<% if (trailer) { %>
       <div class="trailer-section">
         <h3>Trailer</h3>
         <div class="trailer-wrap">
@@ -138,29 +72,27 @@
       </div>
     <% } %>
 
-<!-- Cast -->
-    <% if (cast?.length) { %>
+<% if (cast.length) { %>
       <div class="cast-section">
         <h3>Cast</h3>
         <div class="cast-grid">
-          <% cast.forEach(person => { %>
+          <% cast.forEach(p => { %>
             <div class="cast-card">
-              <img
-                src="<%= img(person.profile_path, 'w185') %>"
-                alt="<%= person.name %>"
+              <img 
+                src="<%= img(p.profile_path, 'w185') %>" 
+                alt="<%= p.name %>" 
                 loading="lazy"
-                onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22185%22 height=%22278%22%3E%3Crect fill=%22%23222222%22 width=%22185%22 height=%22278%22/%3E%3C/svg%3E'"
-              />
-              <span class="cast-name"><%= person.name %></span>
-              <span class="cast-role"><%= person.character %></span>
+                onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22185%22 height=%22278%22%3E%3Crect fill=%22%231a1a1a%22 width=%22185%22 height=%22278%22/%3E%3C/svg%3E'"
+              >
+              <span class="cast-name"><%= p.name %></span>
+              <span class="cast-role"><%= p.character %></span>
             </div>
           <% }) %>
         </div>
       </div>
     <% } %>
 
-<!-- Similar -->
-    <% if (similar?.length) { %>
+<% if (similar.length) { %>
       <div class="similar-section">
         <h3>You may also like</h3>
         <div class="movie-grid">
@@ -174,38 +106,87 @@
 </section>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const player = document.getElementById('player');
-    const fsBtn = document.getElementById('fsBtn');
-    const serverButtons = document.querySelectorAll('.server-btn[data-url]');
+document.addEventListener('DOMContentLoaded', () => {
+  const iframe = document.getElementById('player');
+  const playerContainer = document.getElementById('playerContainer');
+  const fsBtn = document.getElementById('fsBtn');
+  const serverBtns = document.querySelectorAll('.server-btn[data-url]');
 
 // Server switching
-    serverButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        serverButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-const newSrc = btn.dataset.url;
-        if (player && newSrc) {
-          player.src = newSrc;
-        }
-      });
+  serverBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      serverBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      iframe.src = btn.getAttribute('data-url');
     });
+  });
 
-// Fullscreen
-    if (fsBtn && player) {
-      fsBtn.addEventListener('click', () => {
-        if (document.fullscreenElement) {
-          document.exitFullscreen?.();
-        } else {
-          const request = player.requestFullscreen 
-            || player.webkitRequestFullscreen 
-            || player.msRequestFullscreen;
-          request?.call(player);
-        }
-      });
+// ==================== FULLSCREEN BYPASS ====================
+  function toggleFullscreen() {
+    if (!document.fullscreenElement && 
+        !document.webkitFullscreenElement && 
+        !document.mozFullScreenElement && 
+        !document.msFullscreenElement) {
+      
+      // Enter fullscreen on the container (bypass)
+      if (playerContainer.requestFullscreen) {
+        playerContainer.requestFullscreen();
+      } else if (playerContainer.webkitRequestFullscreen) {
+        playerContainer.webkitRequestFullscreen();
+      } else if (playerContainer.mozRequestFullScreen) {
+        playerContainer.mozRequestFullScreen();
+      } else if (playerContainer.msRequestFullscreen) {
+        playerContainer.msRequestFullscreen();
+      }
+    } else {
+      // Exit fullscreen
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  }
+
+// Fullscreen button
+  if (fsBtn) {
+    fsBtn.addEventListener('click', toggleFullscreen);
+  }
+
+// Double click on player container to toggle fullscreen
+  playerContainer.addEventListener('dblclick', toggleFullscreen);
+
+// Keyboard support (F key or Escape)
+  document.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 'f') {
+      e.preventDefault();
+      toggleFullscreen();
+    }
+    if (e.key === 'Escape' && document.fullscreenElement) {
+      // Let default escape behavior work
     }
   });
+
+// Update button text when entering/exiting fullscreen
+  const updateFsButton = () => {
+    if (!fsBtn) return;
+    const isFullscreen = document.fullscreenElement || 
+                         document.webkitFullscreenElement || 
+                         document.mozFullScreenElement || 
+                         document.msFullscreenElement;
+    
+    fsBtn.innerHTML = isFullscreen ? '✕ Exit' : '⛶ Fullscreen';
+  };
+
+document.addEventListener('fullscreenchange', updateFsButton);
+  document.addEventListener('webkitfullscreenchange', updateFsButton);
+  document.addEventListener('mozfullscreenchange', updateFsButton);
+  document.addEventListener('msfullscreenchange', updateFsButton);
+});
 </script>
 
 <%- include('partials/footer') %>
