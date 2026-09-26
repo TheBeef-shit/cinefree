@@ -1,7 +1,43 @@
 <%- include('partials/head') %>
+
+<script>
+  // Ask before leaving if ads try to navigate this tab away
+  (function () {
+    var armed = true;
+    window.addEventListener('beforeunload', function (e) {
+      if (!armed) return;
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    });
+    // Allow intentional leaves (nav links, logo, episode buttons)
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]');
+      if (a && a.href && a.target !== '_blank') {
+        var url = a.getAttribute('href') || '';
+        if (url.indexOf('http') !== 0 || url.indexOf(location.origin) === 0) {
+          armed = false;
+          setTimeout(function () { armed = true; }, 1500);
+        }
+      }
+    }, true);
+    // Confirm parent-level popup opens (does not catch all iframe ads)
+    try {
+      var _open = window.open;
+      window.open = function (url, name, specs) {
+        if (!url) return null;
+        var ok = window.confirm('A page wants to open a new tab (often an ad). Allow it?');
+        if (!ok) return null;
+        return _open.call(window, url, name, specs);
+      };
+    } catch (err) {}
+  })();
+</script>
+
 <section class="watch-section">
   <div class="player-wrap">
     <div class="player-container" id="playerContainer">
+      <div id="playerShield" class="player-shield" title="Click to start player"></div>
       <iframe
         id="player"
         src="<%= embeds[0].url %>"
@@ -9,17 +45,20 @@
         webkitallowfullscreen="true"
         mozallowfullscreen="true"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen *"
+        referrerpolicy="no-referrer"
         frameborder="0"
         scrolling="no"
       ></iframe>
     </div>
   </div>
+
   <div class="container watch-meta">
     <div class="server-bar">
       <span class="server-label">Servers</span>
       <div class="servers" id="servers">
         <% embeds.forEach((e, i) => { %>
           <button
+            type="button"
             class="server-btn <%= i === 0 ? 'active' : '' %>"
             data-url="<%= e.url %>"
             data-index="<%= i %>"
@@ -29,18 +68,30 @@
       </div>
     </div>
 
+    <p class="player-hint">If the video doesn’t load, try another server. Click the player once if ads block the first tap.</p>
+
     <% if (typeof mediaType !== 'undefined' && mediaType === 'tv') { %>
-      <div class="ep-bar">
-        <span class="server-label">Episode</span>
-        <div class="ep-controls">
-          <span>S<%= typeof season !== 'undefined' ? season : 1 %> E<%= typeof episode !== 'undefined' ? episode : 1 %></span>
-          <% if (typeof season !== 'undefined' && season > 1) { %>
-            <a class="server-btn" href="/tv/watch/<%= movie.id %>?s=<%= season - 1 %>&e=1">← Prev Season</a>
-          <% } %>
-          <a class="server-btn" href="/tv/watch/<%= movie.id %>?s=<%= typeof season !== 'undefined' ? season : 1 %>&e=<%= (typeof episode !== 'undefined' ? episode : 1) + 1 %>">Next Ep →</a>
-          <% if (typeof seasons !== 'undefined' && typeof season !== 'undefined' && season < seasons) { %>
-            <a class="server-btn" href="/tv/watch/<%= movie.id %>?s=<%= season + 1 %>&e=1">Next Season →</a>
-          <% } %>
+      <div class="ep-picker">
+        <div class="ep-picker-top">
+          <label class="server-label" for="seasonSelect">Season</label>
+          <select id="seasonSelect" class="season-select" onchange="location.href='/tv/watch/<%= movie.id %>?s='+this.value+'&e=1'">
+            <% const list = (typeof seasonList !== 'undefined' && seasonList.length) ? seasonList : Array.from({length: seasons||1}, (_,i)=>({number:i+1, name:'Season '+(i+1)})); %>
+            <% list.forEach(s => { %>
+              <option value="<%= s.number %>" <%= s.number === season ? 'selected' : '' %>>
+                <%= s.name || ('Season ' + s.number) %><%= s.episode_count ? ' (' + s.episode_count + ' eps)' : '' %>
+              </option>
+            <% }) %>
+          </select>
+          <span class="ep-current">Now: S<%= season %>E<%= episode %></span>
+        </div>
+        <div class="ep-grid" id="epGrid">
+          <% (typeof episodes !== 'undefined' ? episodes : []).forEach(ep => { %>
+            <a
+              href="/tv/watch/<%= movie.id %>?s=<%= season %>&e=<%= ep.episode_number %>"
+              class="ep-btn <%= ep.episode_number === episode ? 'active' : '' %>"
+              title="<%= ep.name || ('Episode ' + ep.episode_number) %>"
+            >E<%= ep.episode_number %></a>
+          <% }) %>
         </div>
       </div>
     <% } %>
@@ -60,7 +111,9 @@
         <% } %>
       </div>
     </div>
+
     <p class="overview"><%= movie.overview || 'No description available.' %></p>
+
     <% if (crew && crew.length) { %>
       <div class="crew">
         <% crew.forEach(c => { %>
@@ -68,6 +121,7 @@
         <% }) %>
       </div>
     <% } %>
+
     <% if (trailer) { %>
       <div class="trailer-section">
         <h3>Trailer</h3>
@@ -76,6 +130,7 @@
         </div>
       </div>
     <% } %>
+
     <% if (cast && cast.length) { %>
       <div class="cast-section">
         <h3>Cast</h3>
@@ -95,6 +150,7 @@
         </div>
       </div>
     <% } %>
+
     <% if (similar && similar.length) { %>
       <div class="similar-section">
         <h3>You may also like</h3>
@@ -107,31 +163,46 @@
     <% } %>
   </div>
 </section>
+
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const iframe = document.getElementById('player');
     const fsBtn = document.getElementById('fsBtn');
     const serverBtns = document.querySelectorAll('.server-btn[data-url]');
+    const shield = document.getElementById('playerShield');
+
+    function showShield() {
+      if (shield) shield.style.display = 'block';
+    }
+    function hideShield() {
+      if (shield) shield.style.display = 'none';
+    }
+
+    if (shield) {
+      shield.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        hideShield();
+      });
+    }
 
     serverBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         serverBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        iframe.src = btn.getAttribute('data-url');
+        if (iframe) iframe.src = btn.getAttribute('data-url');
+        showShield();
       });
     });
 
     if (fsBtn && iframe) {
       fsBtn.addEventListener('click', () => {
-        if (iframe.requestFullscreen) {
-          iframe.requestFullscreen();
-        } else if (iframe.webkitRequestFullscreen) {
-          iframe.webkitRequestFullscreen();
-        } else if (iframe.msRequestFullscreen) {
-          iframe.msRequestFullscreen();
-        }
+        hideShield();
+        const req = iframe.requestFullscreen || iframe.webkitRequestFullscreen || iframe.msRequestFullscreen;
+        if (req) req.call(iframe);
       });
     }
   });
 </script>
+
 <%- include('partials/footer') %>
