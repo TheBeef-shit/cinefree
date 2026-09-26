@@ -13,31 +13,55 @@
         frameborder="0"
         scrolling="no"
       ></iframe>
-
-<!-- Fullscreen Bypass Button -->
-      <button id="fsBtn" class="fs-bypass-btn" title="Toggle Fullscreen">
-        ⛶
-      </button>
+      <button type="button" id="fsBtn" class="fs-bypass-btn" title="Toggle Fullscreen">⛶</button>
     </div>
   </div>
 
-<div class="container watch-meta">
+  <div class="container watch-meta">
     <div class="server-bar">
       <span class="server-label">Servers</span>
       <div class="servers" id="servers">
         <% embeds.forEach((e, i) => { %>
-          <button 
-            class="server-btn <%= i === 0 ? 'active' : '' %>" 
+          <button
+            type="button"
+            class="server-btn <%= i === 0 ? 'active' : '' %>"
             data-url="<%= e.url %>"
             data-index="<%= i %>"
-          >
-            <%= e.name %>
-          </button>
+          ><%= e.name %></button>
         <% }) %>
       </div>
     </div>
 
-<div class="movie-header">
+    <% if (typeof mediaType !== 'undefined' && mediaType === 'tv') { %>
+      <div class="ep-picker">
+        <div class="ep-picker-top">
+          <label class="server-label" for="seasonSelect">Season</label>
+          <select id="seasonSelect" class="season-select"
+            onchange="location.href='/tv/watch/<%= movie.id %>?s='+this.value+'&e=1'">
+            <% const list = (typeof seasonList !== 'undefined' && seasonList.length)
+                 ? seasonList
+                 : Array.from({ length: (typeof seasons !== 'undefined' ? seasons : 1) }, (_, i) => ({ number: i + 1, name: 'Season ' + (i + 1) })); %>
+            <% list.forEach(s => { %>
+              <option value="<%= s.number %>" <%= s.number === season ? 'selected' : '' %>>
+                <%= s.name || ('Season ' + s.number) %><%= s.episode_count ? ' (' + s.episode_count + ' eps)' : '' %>
+              </option>
+            <% }) %>
+          </select>
+          <span class="ep-current">Now: S<%= season %>E<%= episode %></span>
+        </div>
+        <div class="ep-grid">
+          <% (typeof episodes !== 'undefined' ? episodes : []).forEach(ep => { %>
+            <a
+              href="/tv/watch/<%= movie.id %>?s=<%= season %>&e=<%= ep.episode_number %>"
+              class="ep-btn <%= ep.episode_number === episode ? 'active' : '' %>"
+              title="<%= ep.name || ('Episode ' + ep.episode_number) %>"
+            >E<%= ep.episode_number %></a>
+          <% }) %>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="movie-header">
       <h1><%= movie.title %></h1>
       <div class="meta-row">
         <% if (movie.release_date) { %><span><%= year(movie.release_date) %></span><% } %>
@@ -53,9 +77,9 @@
       </div>
     </div>
 
-<p class="overview"><%= movie.overview || 'No description available.' %></p>
+    <p class="overview"><%= movie.overview || 'No description available.' %></p>
 
-<% if (crew.length) { %>
+    <% if (crew && crew.length) { %>
       <div class="crew">
         <% crew.forEach(c => { %>
           <span><strong><%= c.job %>:</strong> <%= c.name %></span>
@@ -63,7 +87,7 @@
       </div>
     <% } %>
 
-<% if (trailer) { %>
+    <% if (trailer) { %>
       <div class="trailer-section">
         <h3>Trailer</h3>
         <div class="trailer-wrap">
@@ -72,15 +96,15 @@
       </div>
     <% } %>
 
-<% if (cast.length) { %>
+    <% if (cast && cast.length) { %>
       <div class="cast-section">
         <h3>Cast</h3>
         <div class="cast-grid">
           <% cast.forEach(p => { %>
             <div class="cast-card">
-              <img 
-                src="<%= img(p.profile_path, 'w185') %>" 
-                alt="<%= p.name %>" 
+              <img
+                src="<%= img(p.profile_path, 'w185') %>"
+                alt="<%= p.name %>"
                 loading="lazy"
                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22185%22 height=%22278%22%3E%3Crect fill=%22%231a1a1a%22 width=%22185%22 height=%22278%22/%3E%3C/svg%3E'"
               >
@@ -92,7 +116,7 @@
       </div>
     <% } %>
 
-<% if (similar.length) { %>
+    <% if (similar && similar.length) { %>
       <div class="similar-section">
         <h3>You may also like</h3>
         <div class="movie-grid">
@@ -112,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const fsBtn = document.getElementById('fsBtn');
   const serverBtns = document.querySelectorAll('.server-btn[data-url]');
 
-// Server switching
   serverBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       serverBtns.forEach(b => b.classList.remove('active'));
@@ -121,71 +144,43 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-// ==================== FULLSCREEN BYPASS ====================
   function toggleFullscreen() {
-    if (!document.fullscreenElement && 
-        !document.webkitFullscreenElement && 
-        !document.mozFullScreenElement && 
-        !document.msFullscreenElement) {
-      
-      // Enter fullscreen on the container (bypass)
-      if (playerContainer.requestFullscreen) {
-        playerContainer.requestFullscreen();
-      } else if (playerContainer.webkitRequestFullscreen) {
-        playerContainer.webkitRequestFullscreen();
-      } else if (playerContainer.mozRequestFullScreen) {
-        playerContainer.mozRequestFullScreen();
-      } else if (playerContainer.msRequestFullscreen) {
-        playerContainer.msRequestFullscreen();
-      }
+    const isFs = document.fullscreenElement || document.webkitFullscreenElement ||
+                 document.mozFullScreenElement || document.msFullscreenElement;
+    if (!isFs) {
+      const el = playerContainer;
+      if (el.requestFullscreen) el.requestFullscreen();
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+      else if (el.msRequestFullscreen) el.msRequestFullscreen();
     } else {
-      // Exit fullscreen
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      }
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+      else if (document.msExitFullscreen) document.msExitFullscreen();
     }
   }
 
-// Fullscreen button
-  if (fsBtn) {
-    fsBtn.addEventListener('click', toggleFullscreen);
-  }
+  if (fsBtn) fsBtn.addEventListener('click', toggleFullscreen);
+  if (playerContainer) playerContainer.addEventListener('dblclick', toggleFullscreen);
 
-// Double click on player container to toggle fullscreen
-  playerContainer.addEventListener('dblclick', toggleFullscreen);
-
-// Keyboard support (F key or Escape)
   document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'f') {
+    if (e.key.toLowerCase() === 'f' && !e.target.matches('input, textarea, select')) {
       e.preventDefault();
       toggleFullscreen();
     }
-    if (e.key === 'Escape' && document.fullscreenElement) {
-      // Let default escape behavior work
-    }
   });
 
-// Update button text when entering/exiting fullscreen
   const updateFsButton = () => {
     if (!fsBtn) return;
-    const isFullscreen = document.fullscreenElement || 
-                         document.webkitFullscreenElement || 
-                         document.mozFullScreenElement || 
-                         document.msFullscreenElement;
-    
-    fsBtn.innerHTML = isFullscreen ? '✕ Exit' : '⛶ Fullscreen';
+    const isFs = document.fullscreenElement || document.webkitFullscreenElement ||
+                 document.mozFullScreenElement || document.msFullscreenElement;
+    fsBtn.innerHTML = isFs ? '✕' : '⛶';
   };
-
-document.addEventListener('fullscreenchange', updateFsButton);
+  document.addEventListener('fullscreenchange', updateFsButton);
   document.addEventListener('webkitfullscreenchange', updateFsButton);
   document.addEventListener('mozfullscreenchange', updateFsButton);
-  document.addEventListener('msfullscreenchange', updateFsButton);
+  document.addEventListener('MSFullscreenChange', updateFsButton);
 });
 </script>
 
