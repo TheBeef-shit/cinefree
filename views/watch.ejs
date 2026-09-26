@@ -6,177 +6,108 @@
       <iframe
         id="player"
         src="<%= embeds[0].url %>"
-        allowfullscreen="true"
-        webkitallowfullscreen="true"
-        mozallowfullscreen="true"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen *"
-        referrerpolicy="no-referrer"
+        allowfullscreen
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+        referrerpolicy="no-referrer-when-downgrade"
         frameborder="0"
-        scrolling="no"
       ></iframe>
     </div>
   </div>
 
-  <div class="container watch-meta">
+<div class="container watch-meta">
+    <!-- Servers -->
     <div class="server-bar">
       <span class="server-label">Servers</span>
       <div class="servers" id="servers">
-        <% embeds.forEach((e, i) => { %>
+        <% embeds.forEach((embed, index) => { %>
           <button
             type="button"
-            class="server-btn <%= i === 0 ? 'active' : '' %>"
-            data-url="<%= e.url %>"
-            data-index="<%= i %>"
-          ><%= e.name %></button>
+            class="server-btn <%= index === 0 ? 'active' : '' %>"
+            data-url="<%= embed.url %>"
+            data-index="<%= index %>"
+          >
+            <%= embed.name %>
+          </button>
         <% }) %>
-        <button type="button" id="fsBtn" class="server-btn">⛶ Fullscreen</button>
+
+<button type="button" id="fsBtn" class="server-btn server-btn--fs">
+          ⛶ Fullscreen
+        </button>
       </div>
     </div>
 
+<!-- TV Season & Episode Selector -->
     <% if (typeof mediaType !== 'undefined' && mediaType === 'tv') { %>
-      <% 
-        const currentSeason = typeof season !== 'undefined' ? Number(season) : 1;
-        const currentEpisode = typeof episode !== 'undefined' ? Number(episode) : 1;
-        const parsedSeasons = (typeof seasonList !== 'undefined' && seasonList.length) 
-          ? seasonList 
-          : Array.from({ length: (typeof seasons !== 'undefined' ? seasons : 1) }, (_, i) => ({ number: i + 1, name: 'Season ' + (i + 1) }));
-        const parsedEpisodes = (typeof episodes !== 'undefined' && episodes.length) ? episodes : [];
+      <%
+        const currentSeason = Number(season) || 1;
+        const currentEpisode = Number(episode) || 1;
+        const seasons = (typeof seasonList !== 'undefined' && seasonList.length)
+          ? seasonList
+          : Array.from({ length: Number(seasons) || 1 }, (_, i) => ({
+              number: i + 1,
+              name: `Season ${i + 1}`
+            }));
+        const episodes = (typeof episodes !== 'undefined' && episodes.length) ? episodes : [];
       %>
 
-      <!-- Clean Inline Styles for TV Selector to guarantee Brave/Chrome compatibility -->
-      <style>
-        .tv-picker-box {
-          background: #121318 !important;
-          border: 1px solid #282a36 !important;
-          border-radius: 10px !important;
-          padding: 16px !important;
-          margin: 20px 0 !important;
-          display: block !important;
-        }
-
-        .tv-picker-top {
-          display: flex !important;
-          align-items: center !important;
-          justify-content: space-between !important;
-          gap: 12px !important;
-          margin-bottom: 14px !important;
-          padding-bottom: 12px !important;
-          border-bottom: 1px solid #222531 !important;
-          flex-wrap: wrap !important;
-        }
-
-        .tv-select-group {
-          display: flex !important;
-          align-items: center !important;
-          gap: 10px !important;
-        }
-
-        .tv-season-select {
-          background: #1c1e26 !important;
-          color: #ffffff !important;
-          border: 1px solid #383c4d !important;
-          padding: 6px 12px !important;
-          border-radius: 6px !important;
-          font-size: 14px !important;
-          outline: none !important;
-          cursor: pointer !important;
-        }
-
-        .tv-status-badge {
-          background: rgba(229, 9, 20, 0.15) !important;
-          color: #ff4d56 !important;
-          border: 1px solid rgba(229, 9, 20, 0.4) !important;
-          padding: 4px 10px !important;
-          border-radius: 12px !important;
-          font-size: 13px !important;
-          font-weight: 600 !important;
-        }
-
-        .tv-episodes-grid {
-          display: grid !important;
-          grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)) !important;
-          gap: 8px !important;
-          max-height: 220px !important;
-          overflow-y: auto !important;
-          padding-right: 4px !important;
-        }
-
-        .tv-ep-button {
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          height: 40px !important;
-          background: #1a1c23 !important;
-          color: #b0b5c0 !important;
-          border: 1px solid #2a2d39 !important;
-          border-radius: 6px !important;
-          text-decoration: none !important;
-          font-weight: 600 !important;
-          font-size: 13px !important;
-          transition: all 0.15s ease !important;
-        }
-
-        .tv-ep-button:hover {
-          background: #2a2d39 !important;
-          color: #ffffff !important;
-          border-color: #4a4e63 !important;
-        }
-
-        .tv-ep-button.active {
-          background: #e50914 !important;
-          color: #ffffff !important;
-          border-color: #e50914 !important;
-          box-shadow: 0 0 10px rgba(229, 9, 20, 0.5) !important;
-        }
-      </style>
-
-      <div class="tv-picker-box">
-        <div class="tv-picker-top">
-          <div class="tv-select-group">
-            <label style="color:#a0a5b5; font-size:14px; font-weight:600;">Season:</label>
-            <select 
-              id="seasonSelect" 
-              class="tv-season-select" 
-              onchange="window.location.href='/tv/watch/<%= movie.id %>?s=' + this.value + '&e=1'"
+<div class="tv-selector">
+        <div class="tv-selector-header">
+          <div class="tv-season-wrapper">
+            <label for="seasonSelect" class="tv-label">Season</label>
+            <select
+              id="seasonSelect"
+              class="tv-season-select"
+              onchange="window.location.href = `/tv/watch/<%= movie.id %>?s=${this.value}&e=1`"
             >
-              <% parsedSeasons.forEach(s => { %>
+              <% seasons.forEach(s => { %>
                 <% const sNum = Number(s.number || s.season_number); %>
                 <option value="<%= sNum %>" <%= sNum === currentSeason ? 'selected' : '' %>>
-                  <%= s.name || ('Season ' + sNum) %><%= s.episode_count ? ' (' + s.episode_count + ' eps)' : '' %>
+                  <%= s.name || `Season ${sNum}` %>
+                  <% if (s.episode_count) { %> (<%= s.episode_count %> eps) <% } %>
                 </option>
               <% }) %>
             </select>
           </div>
 
-          <div class="tv-status-badge">
-            Now Playing: S<%= currentSeason %> E<%= currentEpisode %>
+<div class="tv-now-playing">
+            Now playing: <strong>S<%= currentSeason %> E<%= currentEpisode %></strong>
           </div>
         </div>
 
-        <div class="tv-episodes-grid">
-          <% if (parsedEpisodes.length > 0) { %>
-            <% parsedEpisodes.forEach(ep => { %>
+<% if (episodes.length > 0) { %>
+          <div class="tv-episodes">
+            <% episodes.forEach(ep => { %>
               <% const epNum = Number(ep.episode_number || ep.number); %>
               <a
                 href="/tv/watch/<%= movie.id %>?s=<%= currentSeason %>&e=<%= epNum %>"
-                class="tv-ep-button <%= epNum === currentEpisode ? 'active' : '' %>"
-                title="<%= ep.name || ('Episode ' + epNum) %>"
-              >E<%= epNum %></a>
+                class="tv-ep <%= epNum === currentEpisode ? 'active' : '' %>"
+                title="<%= ep.name || `Episode ${epNum}` %>"
+              >
+                <%= epNum %>
+              </a>
             <% }) %>
-          <% } else { %>
-            <p style="color:#888; font-size:13px;">No episodes found for this season.</p>
-          <% } %>
-        </div>
+          </div>
+        <% } else { %>
+          <p class="tv-no-episodes">No episodes available for this season.</p>
+        <% } %>
       </div>
     <% } %>
 
+<!-- Movie / Show Info -->
     <div class="movie-header">
       <h1><%= movie.title %></h1>
-      <div class="meta-row">
-        <% if (movie.release_date) { %><span><%= year(movie.release_date) %></span><% } %>
-        <% if (movie.runtime) { %><span><%= movie.runtime %> min</span><% } %>
-        <% if (movie.vote_average) { %><span class="score">★ <%= movie.vote_average.toFixed(1) %></span><% } %>
-        <% if (movie.genres && movie.genres.length) { %>
+
+<div class="meta-row">
+        <% if (movie.release_date) { %>
+          <span><%= year(movie.release_date) %></span>
+        <% } %>
+        <% if (movie.runtime) { %>
+          <span><%= movie.runtime %> min</span>
+        <% } %>
+        <% if (movie.vote_average) { %>
+          <span class="score">★ <%= movie.vote_average.toFixed(1) %></span>
+        <% } %>
+        <% if (movie.genres?.length) { %>
           <span class="genres">
             <% movie.genres.slice(0, 3).forEach(g => { %>
               <a href="/genre/<%= g.id %>"><%= g.name %></a>
@@ -186,9 +117,10 @@
       </div>
     </div>
 
-    <p class="overview"><%= movie.overview || 'No description available.' %></p>
+<p class="overview"><%= movie.overview || 'No description available.' %></p>
 
-    <% if (crew && crew.length) { %>
+<!-- Crew -->
+    <% if (crew?.length) { %>
       <div class="crew">
         <% crew.forEach(c => { %>
           <span><strong><%= c.job %>:</strong> <%= c.name %></span>
@@ -196,6 +128,7 @@
       </div>
     <% } %>
 
+<!-- Trailer -->
     <% if (trailer) { %>
       <div class="trailer-section">
         <h3>Trailer</h3>
@@ -205,32 +138,34 @@
       </div>
     <% } %>
 
-    <% if (cast && cast.length) { %>
+<!-- Cast -->
+    <% if (cast?.length) { %>
       <div class="cast-section">
         <h3>Cast</h3>
         <div class="cast-grid">
-          <% cast.forEach(p => { %>
+          <% cast.forEach(person => { %>
             <div class="cast-card">
               <img
-                src="<%= img(p.profile_path, 'w185') %>"
-                alt="<%= p.name %>"
+                src="<%= img(person.profile_path, 'w185') %>"
+                alt="<%= person.name %>"
                 loading="lazy"
-                onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22185%22 height=%22278%22%3E%3Crect fill=%22%231a1a1a%22 width=%22185%22 height=%22278%22/%3E%3C/svg%3E'"
-              >
-              <span class="cast-name"><%= p.name %></span>
-              <span class="cast-role"><%= p.character %></span>
+                onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22185%22 height=%22278%22%3E%3Crect fill=%22%23222222%22 width=%22185%22 height=%22278%22/%3E%3C/svg%3E'"
+              />
+              <span class="cast-name"><%= person.name %></span>
+              <span class="cast-role"><%= person.character %></span>
             </div>
           <% }) %>
         </div>
       </div>
     <% } %>
 
-    <% if (similar && similar.length) { %>
+<!-- Similar -->
+    <% if (similar?.length) { %>
       <div class="similar-section">
         <h3>You may also like</h3>
         <div class="movie-grid">
-          <% similar.forEach(movie => { %>
-            <%- include('partials/movie-card', { movie }) %>
+          <% similar.forEach(m => { %>
+            <%- include('partials/movie-card', { movie: m }) %>
           <% }) %>
         </div>
       </div>
@@ -240,22 +175,34 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const iframe = document.getElementById('player');
+    const player = document.getElementById('player');
     const fsBtn = document.getElementById('fsBtn');
-    const serverBtns = document.querySelectorAll('.server-btn[data-url]');
+    const serverButtons = document.querySelectorAll('.server-btn[data-url]');
 
-    serverBtns.forEach(btn => {
+// Server switching
+    serverButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        serverBtns.forEach(b => b.classList.remove('active'));
+        serverButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        if (iframe) iframe.src = btn.getAttribute('data-url');
+
+const newSrc = btn.dataset.url;
+        if (player && newSrc) {
+          player.src = newSrc;
+        }
       });
     });
 
-    if (fsBtn && iframe) {
+// Fullscreen
+    if (fsBtn && player) {
       fsBtn.addEventListener('click', () => {
-        const req = iframe.requestFullscreen || iframe.webkitRequestFullscreen || iframe.msRequestFullscreen;
-        if (req) req.call(iframe);
+        if (document.fullscreenElement) {
+          document.exitFullscreen?.();
+        } else {
+          const request = player.requestFullscreen 
+            || player.webkitRequestFullscreen 
+            || player.msRequestFullscreen;
+          request?.call(player);
+        }
       });
     }
   });
