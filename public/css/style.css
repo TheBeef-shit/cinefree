@@ -1,6 +1,7 @@
 /* ============================================
    CineFree — Professional free movie site
    5-year polished dark cinema UI
+   Brave + Chrome compatible
    ============================================ */
 
 :root {
@@ -20,7 +21,7 @@
   --shadow: 0 8px 24px rgba(0,0,0,.45);
   --header-h: 64px;
   --transition: .2s ease;
-  --font: 'Inter', system-ui, -apple-system, sans-serif;
+  --font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -58,6 +59,7 @@ input { font-family: inherit; }
   height: var(--header-h);
   background: rgba(10,10,10,.92);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
 
@@ -430,6 +432,7 @@ input { font-family: inherit; }
 .hero-btn.secondary {
   background: rgba(255,255,255,.12);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,.2);
 }
 
@@ -454,6 +457,7 @@ input { font-family: inherit; }
   display: grid;
   place-items: center;
   backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   transition: background var(--transition), border-color var(--transition);
   opacity: 0;
 }
@@ -595,6 +599,7 @@ input { font-family: inherit; }
   padding: .2rem .45rem;
   border-radius: 4px;
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .card-info {
@@ -917,7 +922,7 @@ input { font-family: inherit; }
   .menu-toggle { display: flex; }
   .search-form:not(.mobile) { display: none; }
 
-  .header-inner { gap: 1rem; }
+.header-inner { gap: 1rem; }
   .hero-slider {
     height: 58vh;
     min-height: 340px;
@@ -943,22 +948,22 @@ input { font-family: inherit; }
   .hero-nav.next { right: .5rem; }
   .hero-dots { bottom: 1rem; }
 
-  .section { padding: 1.75rem 0; }
+.section { padding: 1.75rem 0; }
 
-  .movie-grid {
+.movie-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 1rem;
   }
 
-  .card-info { padding: .55rem .5rem .7rem; }
+.card-info { padding: .55rem .5rem .7rem; }
   .card-title { font-size: .82rem; }
 
-  .server-bar {
+.server-bar {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .cast-grid {
+.cast-grid {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: .75rem;
   }
@@ -1029,9 +1034,8 @@ input { font-family: inherit; }
   font-size: .9em;
 }
 
-
-/* ========== ADS ========== */
-.ad-slot {
+/* ========== BANNER SLOTS (Renamed from ad-*) ========== */
+.banner-slot {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1040,11 +1044,11 @@ input { font-family: inherit; }
   min-height: 90px;
   overflow: hidden;
 }
-.ad-slot ins,
-.ad-slot iframe {
+.banner-slot ins,
+.banner-slot iframe {
   max-width: 100%;
 }
-.ad-placeholder {
+.promo-placeholder {
   width: 100%;
   max-width: 728px;
   min-height: 90px;
@@ -1058,14 +1062,13 @@ input { font-family: inherit; }
   letter-spacing: .04em;
   text-transform: uppercase;
 }
-.ad-section {
+.banner-section {
   padding: 0.5rem 0 1rem;
 }
 @media (max-width: 768px) {
-  .ad-slot { min-height: 60px; margin: 1rem 0; }
-  .ad-placeholder { min-height: 60px; }
+  .banner-slot { min-height: 60px; margin: 1rem 0; }
+  .promo-placeholder { min-height: 60px; }
 }
-
 
 /* ===== MStream-style polish ===== */
 .logo-text {
@@ -1370,4 +1373,39 @@ input { font-family: inherit; }
 }
 .ep-controls .server-btn {
   text-decoration: none;
+}
+
+/* ========== BRAVE SHIELDS COMPATIBILITY (FINAL) ========== */
+@media screen {
+  .banner-slot,
+  .promo-placeholder,
+  .banner-section {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+.header,
+  .hero-nav,
+  .mobile-nav {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+.movie-grid,
+  .cast-grid,
+  .genre-grid {
+    display: grid !important;
+  }
+
+body, .card-title, .hero-slide h1 {
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+.server-btn,
+.hero-btn,
+.cat-tab {
+  -webkit-appearance: none;
 }
