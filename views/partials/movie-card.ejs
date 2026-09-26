@@ -1,8 +1,14 @@
-<a href="/watch/<%= movie.id %>" class="movie-card">
+<% 
+  const isTv = movie.media_type === 'tv' || (typeof genre !== 'undefined' && genre && genre.id === 'tv');
+  const href = isTv ? ('/tv/watch/' + movie.id) : ('/watch/' + movie.id);
+  const title = movie.title || movie.name || 'Untitled';
+  const date = movie.release_date || movie.first_air_date || '';
+%>
+<a href="<%= href %>" class="movie-card">
   <div class="poster-wrap">
     <img
       src="<%= img(movie.poster_path, 'w342') %>"
-      alt="<%= movie.title %>"
+      alt="<%= title %>"
       loading="lazy"
       width="342"
       height="513"
@@ -13,7 +19,7 @@
     <% } %>
   </div>
   <div class="card-info">
-    <h3 class="card-title"><%= movie.title %></h3>
-    <span class="card-year"><%= year(movie.release_date) %></span>
+    <h3 class="card-title"><%= title %></h3>
+    <span class="card-year"><%= year(date) %></span>
   </div>
 </a>

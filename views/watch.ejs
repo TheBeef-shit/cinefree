@@ -1,5 +1,4 @@
 <%- include('partials/head') %>
-
 <section class="watch-section">
   <div class="player-wrap">
     <div class="player-container" id="playerContainer">
@@ -15,7 +14,6 @@
       ></iframe>
     </div>
   </div>
-
   <div class="container watch-meta">
     <div class="server-bar">
       <span class="server-label">Servers</span>
@@ -30,6 +28,22 @@
         <button type="button" id="fsBtn" class="server-btn">⛶ Fullscreen</button>
       </div>
     </div>
+
+    <% if (typeof mediaType !== 'undefined' && mediaType === 'tv') { %>
+      <div class="ep-bar">
+        <span class="server-label">Episode</span>
+        <div class="ep-controls">
+          <span>S<%= typeof season !== 'undefined' ? season : 1 %> E<%= typeof episode !== 'undefined' ? episode : 1 %></span>
+          <% if (typeof season !== 'undefined' && season > 1) { %>
+            <a class="server-btn" href="/tv/watch/<%= movie.id %>?s=<%= season - 1 %>&e=1">← Prev Season</a>
+          <% } %>
+          <a class="server-btn" href="/tv/watch/<%= movie.id %>?s=<%= typeof season !== 'undefined' ? season : 1 %>&e=<%= (typeof episode !== 'undefined' ? episode : 1) + 1 %>">Next Ep →</a>
+          <% if (typeof seasons !== 'undefined' && typeof season !== 'undefined' && season < seasons) { %>
+            <a class="server-btn" href="/tv/watch/<%= movie.id %>?s=<%= season + 1 %>&e=1">Next Season →</a>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
 
     <div class="movie-header">
       <h1><%= movie.title %></h1>
@@ -46,17 +60,14 @@
         <% } %>
       </div>
     </div>
-
     <p class="overview"><%= movie.overview || 'No description available.' %></p>
-
-    <% if (crew.length) { %>
+    <% if (crew && crew.length) { %>
       <div class="crew">
         <% crew.forEach(c => { %>
           <span><strong><%= c.job %>:</strong> <%= c.name %></span>
         <% }) %>
       </div>
     <% } %>
-
     <% if (trailer) { %>
       <div class="trailer-section">
         <h3>Trailer</h3>
@@ -65,8 +76,7 @@
         </div>
       </div>
     <% } %>
-
-    <% if (cast.length) { %>
+    <% if (cast && cast.length) { %>
       <div class="cast-section">
         <h3>Cast</h3>
         <div class="cast-grid">
@@ -85,8 +95,7 @@
         </div>
       </div>
     <% } %>
-
-    <% if (similar.length) { %>
+    <% if (similar && similar.length) { %>
       <div class="similar-section">
         <h3>You may also like</h3>
         <div class="movie-grid">
@@ -98,14 +107,12 @@
     <% } %>
   </div>
 </section>
-
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const iframe = document.getElementById('player');
     const fsBtn = document.getElementById('fsBtn');
     const serverBtns = document.querySelectorAll('.server-btn[data-url]');
 
-    // Server switching logic
     serverBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         serverBtns.forEach(b => b.classList.remove('active'));
@@ -114,8 +121,7 @@
       });
     });
 
-    // Native Fullscreen button binding
-    if (fsBtn) {
+    if (fsBtn && iframe) {
       fsBtn.addEventListener('click', () => {
         if (iframe.requestFullscreen) {
           iframe.requestFullscreen();
@@ -128,5 +134,4 @@
     }
   });
 </script>
-
 <%- include('partials/footer') %>

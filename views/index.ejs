@@ -4,29 +4,28 @@
   <% if (featured && featured.length) { %>
     <% featured.forEach((movie, i) => { %>
       <div class="hero-slide<%= i === 0 ? ' active' : '' %>" data-index="<%= i %>"
-           style="background-image: url('<%= img(movie.backdrop_path, 'w1280') %>')">
+           style="background-image: url('<%= img(movie.backdrop_path, 'original') %>')">
         <div class="hero-overlay"></div>
         <div class="container hero-content">
           <div class="hero-text">
-            <span class="hero-badge">Featured</span>
+            <span class="hero-badge live">● NOW SHOWING</span>
             <h1><%= movie.title %></h1>
             <div class="hero-meta">
-              <% if (movie.release_date) { %><span><%= year(movie.release_date) %></span><% } %>
               <% if (movie.vote_average) { %><span class="score">★ <%= movie.vote_average.toFixed(1) %></span><% } %>
+              <% if (movie.release_date) { %><span><%= year(movie.release_date) %></span><% } %>
+              <span class="hd-badge">HD</span>
             </div>
-            <p class="hero-overview"><%= (movie.overview || '').slice(0, 160) %><%= (movie.overview || '').length > 160 ? '…' : '' %></p>
+            <p class="hero-overview"><%= (movie.overview || '').slice(0, 200) %><%= (movie.overview || '').length > 200 ? '…' : '' %></p>
             <div class="hero-actions">
-              <a href="/watch/<%= movie.id %>" class="hero-btn">▶ Watch Now</a>
-              <a href="/watch/<%= movie.id %>" class="hero-btn secondary">More Info</a>
+              <a href="/watch/<%= movie.id %>" class="hero-btn">▶ Play Now</a>
+              <a href="/watch/<%= movie.id %>" class="hero-btn secondary">ⓘ More Info</a>
             </div>
           </div>
         </div>
       </div>
     <% }) %>
-
     <button class="hero-nav prev" id="heroPrev" aria-label="Previous">‹</button>
     <button class="hero-nav next" id="heroNext" aria-label="Next">›</button>
-
     <div class="hero-dots" id="heroDots">
       <% featured.forEach((_, i) => { %>
         <button class="hero-dot<%= i === 0 ? ' active' : '' %>" data-index="<%= i %>" aria-label="Slide <%= i + 1 %>"></button>
@@ -48,6 +47,68 @@
 <section class="section">
   <div class="container">
     <div class="section-header">
+      <h2>Trending Anime Movies</h2>
+      <a href="/anime?type=movie" class="see-all">See All →</a>
+    </div>
+    <div class="movie-grid">
+      <% (anime || []).slice(0, 12).forEach(movie => { %>
+        <%- include('partials/movie-card', { movie }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Trending Anime Series</h2>
+      <a href="/anime?type=tv" class="see-all">See All →</a>
+    </div>
+    <div class="movie-grid">
+      <% (typeof animeTv !== 'undefined' && animeTv ? animeTv : []).slice(0, 12).forEach(movie => { %>
+        <%- include('partials/movie-card', { movie }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Popular TV Shows</h2>
+      <a href="/tv" class="see-all">See All →</a>
+    </div>
+    <div class="movie-grid">
+      <% (typeof tvPopular !== 'undefined' && tvPopular ? tvPopular : []).slice(0, 12).forEach(movie => { %>
+        <%- include('partials/movie-card', { movie }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Popular K-Drama</h2>
+      <a href="/asian?country=KR" class="see-all">See All →</a>
+    </div>
+    <div class="movie-grid">
+      <% (typeof kdrama !== 'undefined' && kdrama ? kdrama : []).slice(0, 12).forEach(movie => { %>
+        <%- include('partials/movie-card', { movie }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
       <h2>Popular Now</h2>
       <a href="/?page=<%= page + 1 %>" class="see-all">More →</a>
     </div>
@@ -58,6 +119,8 @@
     </div>
   </div>
 </section>
+
+<%- include('partials/ad-slot', { slot: 'home-mid' }) %>
 
 <section class="section">
   <div class="container">

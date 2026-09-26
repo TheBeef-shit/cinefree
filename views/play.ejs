@@ -1,0 +1,37 @@
+<%- include('partials/head') %>
+
+<section class="page-header">
+  <div class="container">
+    <h1>Load Player by ID</h1>
+    <p>Paste a TMDB ID or IMDb ID (tt…) and open the player</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <form class="play-form" action="/play" method="post">
+      <input
+        type="text"
+        name="id"
+        placeholder="Example: 569094  or  tt1630029"
+        required
+        autocomplete="off"
+        autofocus
+      >
+      <button type="submit">Load Player</button>
+    </form>
+
+    <div class="play-help">
+      <h3>How to find the ID</h3>
+      <ol>
+        <li>Go to <a href="https://www.themoviedb.org" target="_blank" rel="noopener">themoviedb.org</a></li>
+        <li>Search the movie</li>
+        <li>Open it — the number in the URL after <code>/movie/</code> is the TMDB ID</li>
+        <li>Or use the IMDb ID (starts with <code>tt</code>)</li>
+      </ol>
+      <p>Example: Spider-Man: Across the Spider-Verse → TMDB <code>569094</code></p>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

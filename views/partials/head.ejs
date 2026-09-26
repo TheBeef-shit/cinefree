@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -21,15 +22,19 @@
       </a>
 
       <form class="search-form" action="/search" method="get" role="search">
-        <input type="search" name="q" placeholder="Search movies..." value="<%= typeof q !== 'undefined' ? q : '' %>" autocomplete="off" aria-label="Search movies">
+        <input type="search" name="q" placeholder="Search movies, anime, Pinoy titles…" value="<%= typeof q !== 'undefined' ? q : '' %>" autocomplete="off" aria-label="Search movies">
         <button type="submit" aria-label="Search">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
         </button>
       </form>
 
       <nav class="nav">
-        <a href="/">Home</a>
-        <a href="/genres">Genres</a>
+        <a href="/" class="<%= typeof path !== 'undefined' && path === '/' ? 'nav-active' : '' %>">Home</a>
+        <a href="/movies" class="<%= typeof path !== 'undefined' && path === '/movies' ? 'nav-active' : '' %>">Movies</a>
+        <a href="/tv" class="<%= typeof path !== 'undefined' && (path === '/tv' || path.indexOf('/tv/') === 0) ? 'nav-active' : '' %>">TV Shows</a>
+        <a href="/anime" class="<%= typeof path !== 'undefined' && (path === '/anime' || path.indexOf('/anime') === 0) ? 'nav-active' : '' %>">Anime</a>
+        <a href="/genres" class="<%= typeof path !== 'undefined' && (path === '/genres' || (path.indexOf('/genre/') === 0 && path !== '/genre/16')) ? 'nav-active' : '' %>">Categories</a>
+        <a href="/pinoy" class="<%= typeof path !== 'undefined' && path === '/pinoy' ? 'nav-active' : '' %>">Pinoy / Vivamax</a>
       </nav>
 
       <button class="menu-toggle" aria-label="Menu" id="menuToggle">
@@ -39,12 +44,27 @@
   </header>
 
   <div class="mobile-nav" id="mobileNav">
-    <a href="/">Home</a>
-    <a href="/genres">Genres</a>
+    <div class="mobile-nav-header">
+      <a href="/" class="logo">
+        <span class="logo-icon">▶</span>
+        <span class="logo-text"><%= siteName %></span>
+      </a>
+      <button type="button" class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu">✕</button>
+    </div>
+    <nav class="mobile-nav-links">
+      <a href="/" class="<%= typeof path !== 'undefined' && path === '/' ? 'nav-active' : '' %>">Home</a>
+      <a href="/movies" class="<%= typeof path !== 'undefined' && path === '/movies' ? 'nav-active' : '' %>">Movies</a>
+      <a href="/tv" class="<%= typeof path !== 'undefined' && (path === '/tv' || path.indexOf('/tv/') === 0) ? 'nav-active' : '' %>">TV Shows</a>
+      <a href="/anime" class="<%= typeof path !== 'undefined' && (path === '/anime' || path.indexOf('/anime') === 0) ? 'nav-active' : '' %>">Anime</a>
+      <a href="/genres" class="<%= typeof path !== 'undefined' && (path === '/genres' || (path.indexOf('/genre/') === 0 && path !== '/genre/16')) ? 'nav-active' : '' %>">Categories</a>
+      <a href="/pinoy" class="<%= typeof path !== 'undefined' && path === '/pinoy' ? 'nav-active' : '' %>">Pinoy / Vivamax</a>
+    </nav>
     <form class="search-form mobile" action="/search" method="get">
-      <input type="search" name="q" placeholder="Search movies..." value="<%= typeof q !== 'undefined' ? q : '' %>">
+      <input type="search" name="q" placeholder="Search movies, anime, Pinoy titles…" value="<%= typeof q !== 'undefined' ? q : '' %>">
       <button type="submit">Search</button>
     </form>
   </div>
+
+  <div class="nav-backdrop" id="navBackdrop"></div>
 
   <main>

@@ -2,20 +2,62 @@
 
 <section class="page-header">
   <div class="container">
-    <h1>All Genres</h1>
-    <p>Browse movies by category</p>
+    <h1>Categories</h1>
+    <p>Browse movies by genre · Asian dramas</p>
+    <form class="cat-search" id="catSearchForm" onsubmit="return false;" role="search">
+      <div class="cat-search-inner">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="catSearchInput" placeholder="Filter categories… e.g. action, comedy, k-drama" autocomplete="off" aria-label="Filter categories">
+      </div>
+    </form>
   </div>
 </section>
 
 <section class="section">
   <div class="container">
-    <div class="genre-grid">
+    <div class="cat-tabs" id="catTabs">
+      <button type="button" class="cat-tab active" data-filter="all">All</button>
+      <button type="button" class="cat-tab" data-filter="drama">Drama</button>
+      <button type="button" class="cat-tab" data-filter="action">Action</button>
+      <button type="button" class="cat-tab" data-filter="comedy">Comedy</button>
+      <button type="button" class="cat-tab" data-filter="horror">Horror</button>
+      <button type="button" class="cat-tab" data-filter="romance">Romance</button>
+      <button type="button" class="cat-tab" data-filter="animation">Animation</button>
+      <button type="button" class="cat-tab" data-filter="thriller">Thriller</button>
+      <button type="button" class="cat-tab" data-filter="scifi">Sci-Fi</button>
+    </div>
+
+    <h3 class="cat-subtitle">Asian Drama</h3>
+    <div class="genre-grid" id="asianGrid">
+      <a href="/asian?country=KR" class="genre-card genre-card-special" data-name="k-drama korea korean asian drama">
+        <span>K-Drama</span>
+      </a>
+      <a href="/asian?country=CN" class="genre-card genre-card-special" data-name="c-drama china chinese asian drama">
+        <span>C-Drama</span>
+      </a>
+      <a href="/asian?country=TW" class="genre-card genre-card-special" data-name="taiwan taiwanese asian drama">
+        <span>Taiwan Drama</span>
+      </a>
+      <a href="/asian?country=TH" class="genre-card genre-card-special" data-name="thai thailand asian drama">
+        <span>Thai Drama</span>
+      </a>
+      <a href="/asian?country=JP" class="genre-card genre-card-special" data-name="j-drama japan japanese asian drama">
+        <span>J-Drama</span>
+      </a>
+      <a href="/asian?country=ALL" class="genre-card genre-card-special" data-name="all asian drama">
+        <span>All Asian</span>
+      </a>
+    </div>
+
+    <h3 class="cat-subtitle">Movie Genres</h3>
+    <div class="genre-grid" id="genreGrid">
       <% genres.forEach(g => { %>
-        <a href="/genre/<%= g.id %>" class="genre-card">
+        <a href="/genre/<%= g.id %>" class="genre-card" data-name="<%= g.name.toLowerCase() %>">
           <span><%= g.name %></span>
         </a>
       <% }) %>
     </div>
+    <p class="empty-state" id="catEmpty" hidden>No categories match your filter.</p>
   </div>
 </section>
 

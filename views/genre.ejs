@@ -2,26 +2,62 @@
 
 <section class="page-header">
   <div class="container">
-    <h1><%= genre.name %> Movies</h1>
+    <h1><%= genre.name %></h1>
+        <% if (genre.id === 'asian') { %>
+      <div class="pinoy-sort cat-tabs" style="margin-top:1rem">
+        <a class="cat-tab <%= (typeof asianCountry === 'undefined' || asianCountry === 'KR') ? 'active' : '' %>" href="/asian?country=KR">K-Drama</a>
+        <a class="cat-tab <%= (typeof asianCountry !== 'undefined' && asianCountry === 'CN') ? 'active' : '' %>" href="/asian?country=CN">C-Drama</a>
+        <a class="cat-tab <%= (typeof asianCountry !== 'undefined' && asianCountry === 'TW') ? 'active' : '' %>" href="/asian?country=TW">Taiwan</a>
+        <a class="cat-tab <%= (typeof asianCountry !== 'undefined' && asianCountry === 'TH') ? 'active' : '' %>" href="/asian?country=TH">Thai</a>
+        <a class="cat-tab <%= (typeof asianCountry !== 'undefined' && asianCountry === 'JP') ? 'active' : '' %>" href="/asian?country=JP">J-Drama</a>
+        <a class="cat-tab <%= (typeof asianCountry !== 'undefined' && asianCountry === 'ALL') ? 'active' : '' %>" href="/asian?country=ALL">All Asian</a>
+      </div>
+    <% } %>
+    <% if (genre.id === 'anime') { %>
+      <div class="pinoy-sort cat-tabs" style="margin-top:1rem">
+        <a class="cat-tab <%= (typeof animeType === 'undefined' || animeType === 'tv') ? 'active' : '' %>" href="/anime?type=tv">Anime Series</a>
+        <a class="cat-tab <%= (typeof animeType !== 'undefined' && animeType === 'movie') ? 'active' : '' %>" href="/anime?type=movie">Anime Movies</a>
+      </div>
+    <% } %>
+    <% if (genre.id === 'pinoy') { %>
+      <div class="pinoy-sort cat-tabs" style="margin-top:1rem">
+        <a class="cat-tab <%= (typeof sort === 'undefined' || sort === 'popular') ? 'active' : '' %>" href="/pinoy?sort=popular<%= typeof q !== 'undefined' && q ? '&q=' + encodeURIComponent(q) : '' %>">Popular</a>
+        <a class="cat-tab <%= (typeof sort !== 'undefined' && sort === 'most') ? 'active' : '' %>" href="/pinoy?sort=most<%= typeof q !== 'undefined' && q ? '&q=' + encodeURIComponent(q) : '' %>">Most Watched</a>
+      </div>
+    <% } %>
   </div>
 </section>
 
 <section class="section">
   <div class="container">
+    <% if (typeof q !== 'undefined' && q) { %>
+      <p class="search-hint">Results for “<%= q %>”</p>
+    <% } %>
     <div class="movie-grid">
-      <% movies.forEach(movie => { %>
-        <%- include('partials/movie-card', { movie }) %>
-      <% }) %>
+      <% if (movies && movies.length) { %>
+        <% movies.forEach(movie => { %>
+          <div class="fuzzy-item" data-title="<%= (movie.title || '').toLowerCase() %>" data-original="<%= (movie.original_title || '').toLowerCase() %>">
+          <%- include('partials/movie-card', { movie }) %>
+        </div>
+        <% }) %>
+      <% } else { %>
+        <p class="empty-state">No movies found. Try another search.</p>
+      <% } %>
     </div>
 
     <% if (totalPages > 1) { %>
       <div class="pagination">
+        <% const base = (genre.id === 'pinoy') ? '/pinoy' : (genre.id === 'movies') ? '/movies' : (genre.id === 'tv') ? '/tv' : (genre.id === 'anime') ? '/anime' : (genre.id === 'asian') ? '/asian' : ('/genre/' + genre.id);
+        const countryParam = (genre.id === 'asian' && typeof asianCountry !== 'undefined') ? ('&country=' + asianCountry) : '';
+        const typeParam = (genre.id === 'anime' && typeof animeType !== 'undefined') ? ('&type=' + animeType) : ''; %>
+        <% const qParam = (typeof q !== 'undefined' && q) ? ('&q=' + encodeURIComponent(q)) : '';
+        const sortParam = (genre.id === 'pinoy' && typeof sort !== 'undefined') ? ('&sort=' + sort) : ''; %>
         <% if (page > 1) { %>
-          <a href="/genre/<%= genre.id %>?page=<%= page - 1 %>" class="page-btn">← Prev</a>
+          <a href="<%= base %>?page=<%= page - 1 %><%= qParam %><%= sortParam %><%= typeof typeParam !== 'undefined' ? typeParam : '' %><%= typeof countryParam !== 'undefined' ? countryParam : '' %>" class="page-btn">← Prev</a>
         <% } %>
         <span class="page-info">Page <%= page %> of <%= totalPages %></span>
         <% if (page < totalPages) { %>
-          <a href="/genre/<%= genre.id %>?page=<%= page + 1 %>" class="page-btn">Next →</a>
+          <a href="<%= base %>?page=<%= page + 1 %><%= qParam %><%= sortParam %><%= typeof typeParam !== 'undefined' ? typeParam : '' %><%= typeof countryParam !== 'undefined' ? countryParam : '' %>" class="page-btn">Next →</a>
         <% } %>
       </div>
     <% } %>
