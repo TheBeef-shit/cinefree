@@ -22,12 +22,7 @@
       <span class="server-label">Servers</span>
       <div class="servers" id="servers">
         <% embeds.forEach((e, i) => { %>
-          <button
-            type="button"
-            class="server-btn <%= i === 0 ? 'active' : '' %>"
-            data-url="<%= e.url %>"
-            data-index="<%= i %>"
-          ><%= e.name %></button>
+          <button type="button" class="server-btn <%= i === 0 ? 'active' : '' %>" data-url="<%= e.url %>"><%= e.name %></button>
         <% }) %>
       </div>
     </div>
@@ -36,14 +31,8 @@
       <div class="ep-picker">
         <div class="ep-picker-top">
           <label class="server-label" for="seasonSelect">Season</label>
-          <select
-            id="seasonSelect"
-            class="season-select"
-            onchange="location.href='/tv/watch/<%= movie.id %>?s='+this.value+'&e=1'"
-          >
-            <% const list = (typeof seasonList !== 'undefined' && seasonList.length)
-                 ? seasonList
-                 : Array.from({ length: (typeof seasons !== 'undefined' ? seasons : 1) }, (_, i) => ({ number: i + 1, name: 'Season ' + (i + 1) })); %>
+          <select id="seasonSelect" class="season-select" onchange="location.href='/tv/watch/<%= movie.id %>?s='+this.value+'&e=1'">
+            <% const list = (typeof seasonList !== 'undefined' && seasonList.length) ? seasonList : Array.from({ length: (typeof seasons !== 'undefined' ? seasons : 1) }, (_, i) => ({ number: i + 1, name: 'Season ' + (i + 1) })); %>
             <% list.forEach(s => { %>
               <option value="<%= s.number %>" <%= s.number === season ? 'selected' : '' %>>
                 <%= s.name || ('Season ' + s.number) %><%= s.episode_count ? ' (' + s.episode_count + ' eps)' : '' %>
@@ -54,11 +43,9 @@
         </div>
         <div class="ep-grid">
           <% (typeof episodes !== 'undefined' ? episodes : []).forEach(ep => { %>
-            <a
-              href="/tv/watch/<%= movie.id %>?s=<%= season %>&e=<%= ep.episode_number %>"
-              class="ep-btn <%= ep.episode_number === episode ? 'active' : '' %>"
-              title="<%= ep.name || ('Episode ' + ep.episode_number) %>"
-            >E<%= ep.episode_number %></a>
+            <a href="/tv/watch/<%= movie.id %>?s=<%= season %>&e=<%= ep.episode_number %>"
+               class="ep-btn <%= ep.episode_number === episode ? 'active' : '' %>"
+               title="<%= ep.name || ('Episode ' + ep.episode_number) %>">E<%= ep.episode_number %></a>
           <% }) %>
         </div>
       </div>
@@ -79,9 +66,7 @@
         <% } %>
       </div>
     </div>
-
     <p class="overview"><%= movie.overview || 'No description available.' %></p>
-
     <% if (crew && crew.length) { %>
       <div class="crew">
         <% crew.forEach(c => { %>
@@ -89,7 +74,6 @@
         <% }) %>
       </div>
     <% } %>
-
     <% if (trailer) { %>
       <div class="trailer-section">
         <h3>Trailer</h3>
@@ -98,19 +82,14 @@
         </div>
       </div>
     <% } %>
-
     <% if (cast && cast.length) { %>
       <div class="cast-section">
         <h3>Cast</h3>
         <div class="cast-grid">
           <% cast.forEach(p => { %>
             <div class="cast-card">
-              <img
-                src="<%= img(p.profile_path, 'w185') %>"
-                alt="<%= p.name %>"
-                loading="lazy"
-                onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22185%22 height=%22278%22%3E%3Crect fill=%22%231a1a1a%22 width=%22185%22 height=%22278%22/%3E%3C/svg%3E'"
-              >
+              <img src="<%= img(p.profile_path, 'w185') %>" alt="<%= p.name %>" loading="lazy"
+                onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22185%22 height=%22278%22%3E%3Crect fill=%22%231a1a1a%22 width=%22185%22 height=%22278%22/%3E%3C/svg%3E'">
               <span class="cast-name"><%= p.name %></span>
               <span class="cast-role"><%= p.character %></span>
             </div>
@@ -118,7 +97,6 @@
         </div>
       </div>
     <% } %>
-
     <% if (similar && similar.length) { %>
       <div class="similar-section">
         <h3>You may also like</h3>
@@ -138,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const playerContainer = document.getElementById('playerContainer');
   const serverBtns = document.querySelectorAll('.server-btn[data-url]');
 
-  // Server switch
   serverBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       serverBtns.forEach(b => b.classList.remove('active'));
@@ -147,17 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // F key → fullscreen (player area only, no overlay button)
   function toggleFullscreen() {
     const el = playerContainer || iframe;
     if (!el) return;
-
-    const isFs =
-      document.fullscreenElement ||
-      document.webkitFullscreenElement ||
-      document.mozFullScreenElement ||
-      document.msFullscreenElement;
-
+    const isFs = document.fullscreenElement || document.webkitFullscreenElement ||
+                 document.mozFullScreenElement || document.msFullscreenElement;
     if (!isFs) {
       if (el.requestFullscreen) el.requestFullscreen();
       else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();

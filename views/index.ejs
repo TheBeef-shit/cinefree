@@ -44,14 +44,114 @@
   <% } %>
 </section>
 
+
 <section class="section">
   <div class="container">
     <div class="section-header">
-      <h2>Trending Anime Movies</h2>
-      <a href="/anime?type=movie" class="see-all">See All →</a>
+      <h2>🔥 Trending Now</h2>
+      <a href="/movies" class="see-all">See All →</a>
     </div>
     <div class="movie-grid">
-      <% (anime || []).slice(0, 12).forEach(movie => { %>
+      <% (typeof trendingAll !== 'undefined' ? trendingAll : []).forEach(item => { %>
+        <% const isMovie = item.media_type === 'movie'; %>
+        <% const href = isMovie ? ('/watch/' + item.id) : ('/tv/watch/' + item.id); %>
+        <% const title = item.title || item.name; %>
+        <a href="<%= href %>" class="movie-card">
+          <div class="poster-wrap">
+            <img src="<%= img(item.poster_path, 'w342') %>" alt="<%= title %>" loading="lazy"
+              onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22342%22 height=%22513%22%3E%3Crect fill=%22%231a1a1a%22 width=%22342%22 height=%22513%22/%3E%3C/svg%3E'">
+            <% if (item.vote_average) { %><span class="rating"><%= Number(item.vote_average).toFixed(1) %></span><% } %>
+          </div>
+          <div class="card-info">
+            <h3 class="card-title"><%= title %></h3>
+            <span class="card-year"><%= isMovie ? 'Movie' : 'TV' %></span>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>⚡ New Anime Release</h2>
+      <a href="/anime?type=tv" class="see-all">See All →</a>
+    </div>
+    <div class="movie-grid" id="liveAnimeGrid">
+      <% if (typeof newAnime !== 'undefined' && newAnime.length) { %>
+        <% newAnime.forEach(item => { %>
+          <a href="<%= item.url %>" class="movie-card latest-card">
+            <div class="poster-wrap">
+              <img src="<%= item.poster || img(item.poster_path, 'w342') %>" alt="<%= item.title %>" loading="lazy"
+                onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22342%22 height=%22513%22%3E%3Crect fill=%22%231a1a1a%22 width=%22342%22 height=%22513%22/%3E%3C/svg%3E'">
+              <span class="kind-badge">Anime</span>
+              <span class="ep-badge"><%= item.episode_label || ('Ep ' + item.episode) %></span>
+            </div>
+            <div class="card-info">
+              <h3 class="card-title"><%= item.title %></h3>
+              <span class="card-year"><%= item.badge %></span>
+            </div>
+          </a>
+        <% }) %>
+      <% } else { %>
+        <p class="empty-state">No new anime episodes in the last 24 hours yet. Auto-refreshes every minute.</p>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>🇰🇷 New K-Drama Release</h2>
+      <a href="/asian?country=KR" class="see-all">See All →</a>
+    </div>
+    <div class="movie-grid" id="liveKdramaGrid">
+      <% if (typeof newKDrama !== 'undefined' && newKDrama.length) { %>
+        <% newKDrama.forEach(item => { %>
+          <a href="<%= item.url %>" class="movie-card latest-card">
+            <div class="poster-wrap">
+              <img src="<%= item.poster || img(item.poster_path, 'w342') %>" alt="<%= item.title %>" loading="lazy"
+                onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22342%22 height=%22513%22%3E%3Crect fill=%22%231a1a1a%22 width=%22342%22 height=%22513%22/%3E%3C/svg%3E'">
+              <span class="kind-badge">K-Drama</span>
+              <% if (item.episode_label) { %><span class="ep-badge"><%= item.episode_label %></span><% } %>
+            </div>
+            <div class="card-info">
+              <h3 class="card-title"><%= item.title %></h3>
+              <span class="card-year"><%= item.badge %></span>
+            </div>
+          </a>
+        <% }) %>
+      <% } else { %>
+        <p class="empty-state">No new K-drama episodes in the last few days.</p>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>⭐ Popular Now</h2>
+      <a href="/movies" class="see-all">See All →</a>
+    </div>
+    <div class="movie-grid">
+      <% (typeof popularNow !== 'undefined' ? popularNow : (popular || [])).slice(0, 12).forEach(movie => { %>
+        <%- include('partials/movie-card', { movie }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>👁️ Most Watched</h2>
+      <a href="/tv" class="see-all">See All →</a>
+    </div>
+    <div class="movie-grid">
+      <% (typeof mostWatched !== 'undefined' ? mostWatched : []).forEach(movie => { %>
         <%- include('partials/movie-card', { movie }) %>
       <% }) %>
     </div>
@@ -72,8 +172,6 @@
   </div>
 </section>
 
-
-
 <section class="section">
   <div class="container">
     <div class="section-header">
@@ -88,77 +186,45 @@
   </div>
 </section>
 
-<section class="section">
-  <div class="container">
-    <div class="section-header">
-      <h2>Popular K-Drama</h2>
-      <a href="/asian?country=KR" class="see-all">See All →</a>
-    </div>
-    <div class="movie-grid">
-      <% (typeof kdrama !== 'undefined' && kdrama ? kdrama : []).slice(0, 12).forEach(movie => { %>
-        <%- include('partials/movie-card', { movie }) %>
-      <% }) %>
-    </div>
-  </div>
-</section>
-
-
-
-
-
-<section class="section">
-  <div class="container">
-    <div class="section-header">
-      <h2>Popular Now</h2>
-      <a href="/?page=<%= page + 1 %>" class="see-all">More →</a>
-    </div>
-    <div class="movie-grid">
-      <% popular.slice(0, 12).forEach(movie => { %>
-        <%- include('partials/movie-card', { movie }) %>
-      <% }) %>
-    </div>
-  </div>
-</section>
-
-<%- include('partials/ad-slot', { slot: 'home-mid' }) %>
-
-<section class="section">
-  <div class="container">
-    <div class="section-header">
-      <h2>Top Rated</h2>
-    </div>
-    <div class="movie-grid">
-      <% topRated.slice(0, 12).forEach(movie => { %>
-        <%- include('partials/movie-card', { movie }) %>
-      <% }) %>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <div class="section-header">
-      <h2>Now Playing</h2>
-    </div>
-    <div class="movie-grid">
-      <% nowPlaying.slice(0, 12).forEach(movie => { %>
-        <%- include('partials/movie-card', { movie }) %>
-      <% }) %>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <div class="section-header">
-      <h2>Coming Soon</h2>
-    </div>
-    <div class="movie-grid">
-      <% upcoming.slice(0, 12).forEach(movie => { %>
-        <%- include('partials/movie-card', { movie }) %>
-      <% }) %>
-    </div>
-  </div>
-</section>
+<script>
+  // Soft refresh live anime/kdrama every 60s without full page reload
+  (function () {
+    var INTERVAL = 60 * 1000;
+    function cardHtml(item, kind) {
+      var poster = item.poster || (item.poster_path ? ('https://image.tmdb.org/t/p/w342' + item.poster_path) : '');
+      var ep = item.episode_label || (item.episode ? ('Ep ' + item.episode) : '');
+      return (
+        '<a href="' + (item.url || '#') + '" class="movie-card latest-card">' +
+          '<div class="poster-wrap">' +
+            '<img src="' + poster + '" alt="" loading="lazy">' +
+            '<span class="kind-badge">' + kind + '</span>' +
+            (ep ? '<span class="ep-badge">' + ep + '</span>' : '') +
+          '</div>' +
+          '<div class="card-info">' +
+            '<h3 class="card-title">' + (item.title || '') + '</h3>' +
+            '<span class="card-year">' + (item.badge || '') + '</span>' +
+          '</div>' +
+        '</a>'
+      );
+    }
+    function refreshLive() {
+      fetch('/api/live')
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data || !data.ok) return;
+          var a = document.getElementById('liveAnimeGrid');
+          var k = document.getElementById('liveKdramaGrid');
+          if (a && data.newAnime && data.newAnime.length) {
+            a.innerHTML = data.newAnime.map(function (i) { return cardHtml(i, 'Anime'); }).join('');
+          }
+          if (k && data.newKDrama && data.newKDrama.length) {
+            k.innerHTML = data.newKDrama.map(function (i) { return cardHtml(i, 'K-Drama'); }).join('');
+          }
+        })
+        .catch(function () {});
+    }
+    setInterval(refreshLive, INTERVAL);
+  })();
+</script>
 
 <%- include('partials/footer') %>

@@ -1,7 +1,6 @@
 /* ============================================
    CineFree — Professional free movie site
    5-year polished dark cinema UI
-   Brave + Chrome compatible
    ============================================ */
 
 :root {
@@ -21,7 +20,7 @@
   --shadow: 0 8px 24px rgba(0,0,0,.45);
   --header-h: 64px;
   --transition: .2s ease;
-  --font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -59,7 +58,6 @@ input { font-family: inherit; }
   height: var(--header-h);
   background: rgba(10,10,10,.92);
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
 
@@ -349,9 +347,9 @@ input { font-family: inherit; }
 
 .hero-content {
   position: relative;
-  z-index: 2;
+  z-index: 4;
   width: 100%;
-  padding-bottom: 4.5rem;
+  padding-bottom: 3.25rem;
   padding-top: 2rem;
 }
 
@@ -408,6 +406,9 @@ input { font-family: inherit; }
   display: flex;
   flex-wrap: wrap;
   gap: .75rem;
+  position: relative;
+  z-index: 5;
+  margin-bottom: 0.25rem;
 }
 
 .hero-btn {
@@ -432,7 +433,6 @@ input { font-family: inherit; }
 .hero-btn.secondary {
   background: rgba(255,255,255,.12);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,.2);
 }
 
@@ -457,7 +457,6 @@ input { font-family: inherit; }
   display: grid;
   place-items: center;
   backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   transition: background var(--transition), border-color var(--transition);
   opacity: 0;
 }
@@ -474,21 +473,28 @@ input { font-family: inherit; }
 
 .hero-dots {
   position: absolute;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
+  bottom: 0.85rem;
+  left: 0;
+  right: 0;
+  transform: none;
+  z-index: 3;
   display: flex;
-  gap: .5rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  pointer-events: none;
+  padding: 0 1rem;
 }
 
 .hero-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: rgba(255,255,255,.35);
   transition: background var(--transition), transform var(--transition);
   padding: 0;
+  pointer-events: auto;
+  flex-shrink: 0;
 }
 
 .hero-dot.active {
@@ -599,7 +605,6 @@ input { font-family: inherit; }
   padding: .2rem .45rem;
   border-radius: 4px;
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
 }
 
 .card-info {
@@ -922,7 +927,7 @@ input { font-family: inherit; }
   .menu-toggle { display: flex; }
   .search-form:not(.mobile) { display: none; }
 
-.header-inner { gap: 1rem; }
+  .header-inner { gap: 1rem; }
   .hero-slider {
     height: 58vh;
     min-height: 340px;
@@ -937,33 +942,46 @@ input { font-family: inherit; }
     );
   }
   .hero-content {
-    padding-bottom: 3.5rem;
+    padding-bottom: 2.75rem;
     text-align: left;
   }
   .hero-text { max-width: 100%; }
   .hero-slide h1 { font-size: 1.7rem; }
-  .hero-overview { font-size: .88rem; max-width: 100%; }
+  .hero-overview { font-size: .88rem; max-width: 100%; margin-bottom: 1rem; }
+  .hero-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.75rem; /* clear space above dots */
+  }
+  .hero-btn {
+    padding: 0.7rem 1.15rem;
+    font-size: 0.9rem;
+  }
   .hero-nav { opacity: 1; width: 38px; height: 38px; font-size: 1.3rem; }
   .hero-nav.prev { left: .5rem; }
   .hero-nav.next { right: .5rem; }
-  .hero-dots { bottom: 1rem; }
+  .hero-dots {
+    bottom: 0.65rem;
+    z-index: 3;
+  }
 
-.section { padding: 1.75rem 0; }
+  .section { padding: 1.75rem 0; }
 
-.movie-grid {
+  .movie-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 1rem;
   }
 
-.card-info { padding: .55rem .5rem .7rem; }
+  .card-info { padding: .55rem .5rem .7rem; }
   .card-title { font-size: .82rem; }
 
-.server-bar {
+  .server-bar {
     flex-direction: column;
     align-items: flex-start;
   }
 
-.cast-grid {
+  .cast-grid {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: .75rem;
   }
@@ -976,7 +994,7 @@ input { font-family: inherit; }
     gap: .75rem;
   }
   .genre-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -1034,8 +1052,9 @@ input { font-family: inherit; }
   font-size: .9em;
 }
 
-/* ========== BANNER SLOTS (Renamed from ad-*) ========== */
-.banner-slot {
+
+/* ========== ADS ========== */
+.ad-slot {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1044,11 +1063,11 @@ input { font-family: inherit; }
   min-height: 90px;
   overflow: hidden;
 }
-.banner-slot ins,
-.banner-slot iframe {
+.ad-slot ins,
+.ad-slot iframe {
   max-width: 100%;
 }
-.promo-placeholder {
+.ad-placeholder {
   width: 100%;
   max-width: 728px;
   min-height: 90px;
@@ -1062,13 +1081,14 @@ input { font-family: inherit; }
   letter-spacing: .04em;
   text-transform: uppercase;
 }
-.banner-section {
+.ad-section {
   padding: 0.5rem 0 1rem;
 }
 @media (max-width: 768px) {
-  .banner-slot { min-height: 60px; margin: 1rem 0; }
-  .promo-placeholder { min-height: 60px; }
+  .ad-slot { min-height: 60px; margin: 1rem 0; }
+  .ad-placeholder { min-height: 60px; }
 }
+
 
 /* ===== MStream-style polish ===== */
 .logo-text {
@@ -1309,7 +1329,7 @@ input { font-family: inherit; }
 
 @media (max-width: 768px) {
   .movie-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.75rem;
   }
   .section .container,
@@ -1337,8 +1357,8 @@ input { font-family: inherit; }
 
 @media (max-width: 360px) {
   .movie-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.5rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
   }
   .card-title { font-size: 0.74rem; }
 }
@@ -1375,44 +1395,10 @@ input { font-family: inherit; }
   text-decoration: none;
 }
 
-/* ========== BRAVE SHIELDS COMPATIBILITY (FINAL) ========== */
-@media screen {
-  .banner-slot,
-  .promo-placeholder,
-  .banner-section {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-
-.header,
-  .hero-nav,
-  .mobile-nav {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-
-.movie-grid,
-  .cast-grid,
-  .genre-grid {
-    display: grid !important;
-  }
-
-body, .card-title, .hero-slide h1 {
-    font-family: var(--font);
-    -webkit-font-smoothing: antialiased;
-  }
-}
-
-.server-btn,
-.hero-btn,
-.cat-tab {
-  -webkit-appearance: none;
-}
-/* ========== EPISODE / SEASON PICKER (TV) ========== */
+/* Episode picker */
 .ep-picker {
   margin-bottom: 1.5rem;
-  padding: 1rem 1.15rem;
+  padding: 1rem;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -1422,18 +1408,17 @@ body, .card-title, .hero-slide h1 {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.85rem;
 }
 .season-select {
   background: var(--bg-elevated);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   padding: 0.5rem 0.85rem;
   font-size: 0.9rem;
   outline: none;
   max-width: 100%;
-  cursor: pointer;
 }
 .season-select:focus {
   border-color: var(--accent);
@@ -1457,14 +1442,13 @@ body, .card-title, .hero-slide h1 {
   align-items: center;
   justify-content: center;
   padding: 0 0.65rem;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   font-size: 0.82rem;
   font-weight: 600;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   color: var(--text-muted);
-  transition: background var(--transition), color var(--transition), border-color var(--transition);
-  text-decoration: none;
+  transition: background .15s, color .15s, border-color .15s;
 }
 .ep-btn:hover {
   color: var(--text);
@@ -1475,50 +1459,106 @@ body, .card-title, .hero-slide h1 {
   border-color: var(--accent);
   color: #fff;
 }
+@media (max-width: 768px) {
+  .ep-current { margin-left: 0; width: 100%; }
+  .ep-grid { max-height: 120px; }
+  .ep-btn { min-width: 40px; height: 34px; font-size: 0.78rem; }
+}
 
-/* Fullscreen button on player */
-.player-container {
-  position: relative;
+.cat-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0.5rem 0 1rem;
+  letter-spacing: 0.02em;
 }
-.fs-bypass-btn {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  z-index: 5;
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  border-radius: 8px;
-  background: rgba(0,0,0,0.75);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.2);
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: background var(--transition);
+.genre-card-special {
+  border-color: rgba(229, 9, 20, 0.35);
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.12), var(--bg-card));
 }
-.fs-bypass-btn:hover {
-  background: rgba(229, 9, 20, 0.9);
+.genre-card-special:hover {
   border-color: var(--accent);
 }
 
+
+
+
+/* Player first-click shield (no sandbox) */
+.player-container { position: relative; }
+.player-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.player-shield::after {
+  content: "Click to play";
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  background: var(--accent, #e50914);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  pointer-events: none;
+}
+.player-hint {
+  font-size: 0.85rem;
+  color: var(--text-dim, #888);
+  margin: 0 0 1rem;
+}
+
+/* Latest Releases badges */
+.kind-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(229, 9, 20, 0.9);
+  color: #fff;
+}
+.ep-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  z-index: 2;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.latest-card .card-year {
+  white-space: normal;
+  line-height: 1.3;
+  font-size: 0.72rem;
+}
+
+/* 3-col mobile denser cards */
 @media (max-width: 768px) {
-  .ep-current {
-    margin-left: 0;
-    width: 100%;
+  .movie-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.5rem !important;
   }
-  .ep-grid {
-    max-height: 120px;
+  .card-title {
+    font-size: 0.72rem;
+    -webkit-line-clamp: 2;
   }
-  .ep-btn {
-    min-width: 40px;
-    height: 34px;
-    font-size: 0.78rem;
-  }
-  .fs-bypass-btn {
-    width: 38px;
-    height: 38px;
-    right: 8px;
-    bottom: 8px;
-  }
+  .card-year { font-size: 0.65rem; }
+  .rating { font-size: 0.65rem; padding: 0.12rem 0.3rem; }
+  .kind-badge { font-size: 0.55rem; padding: 0.15rem 0.35rem; }
+  .ep-badge { font-size: 0.65rem; padding: 0.15rem 0.35rem; }
 }

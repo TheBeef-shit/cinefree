@@ -1,11 +1,14 @@
 {
   "name": "free-movie-site",
   "version": "1.0.0",
-  "description": "Professional free movie streaming site powered by TMDB + free embeds",
+  "description": "CineFree - free movie & TV streaming site",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
