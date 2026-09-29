@@ -642,7 +642,9 @@ app.get('/watch/:id', async (req, res, next) => {
     const imdbId = externalIds.imdb_id || '';
     const embeds = [
       { name: 'VidStuck', url: `https://embed.vidstuck.xyz/embed/movie/${id}?back=1&branding=streamex` },
-      { name: 'ZXC Stream', url: `https://zxcstream.xyz/player/movie/${id}` },      { name: 'MultiEmbed', url: `https://multiembed.mov/?video_id=${id}&tmdb=1` },
+      { name: 'ZXC Stream', url: `https://zxcstream.xyz/player/movie/${id}` },
+      { name: 'Vidsrc', url: `https://vidsrc.party/embed/movie/${id}` },
+      { name: 'MultiEmbed', url: `https://multiembed.mov/?video_id=${id}&tmdb=1` },
       { name: 'SuperEmbed', url: `https://multiembed.mov/?video_id=${id}&tmdb=1&server=1` },
       { name: 'VidSrc Top', url: `https://vid-src.top/embed/movie/${id}` },
       { name: 'VidSrc Pro', url: `https://vidsrc.pro/embed/movie/${id}` },
@@ -704,7 +706,9 @@ app.get('/tv/watch/:id', async (req, res, next) => {
     const imdbId = externalIds.imdb_id || '';
     const embeds = [
       { name: 'VidStuck', url: `https://embed.vidstuck.xyz/embed/tv/${id}/${season}/${episode}?back=1&branding=streamex` },
-      { name: 'ZXC Stream', url: `https://zxcstream.xyz/player/tv/${id}/${season}/${episode}` },      { name: 'MultiEmbed', url: `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${season}&e=${episode}` },
+      { name: 'ZXC Stream', url: `https://zxcstream.xyz/player/tv/${id}/${season}/${episode}` },      
+      { name: 'MultiEmbed', url: `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${season}&e=${episode}` },
+      { name: 'My Server', url: `https://vidsrc.party/embed/tv/${id}/${season}/${episode}` },
       { name: 'SuperEmbed', url: `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${season}&e=${episode}&server=1` },
       { name: 'VidSrc Top', url: `https://vid-src.top/embed/tv/${id}/${season}/${episode}` },
       { name: 'VidSrc Pro', url: `https://vidsrc.pro/embed/tv/${id}/${season}/${episode}` },
