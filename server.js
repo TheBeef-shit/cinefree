@@ -26,6 +26,9 @@ app.use((req, res, next) => {
   res.locals.img = (p, size = 'w500') => (p ? `${IMG}/${size}${p}` : '/img/no-poster.jpg');
   res.locals.year = (date) => (date ? String(date).slice(0, 4) : '');
   res.locals.path = req.path;
+  res.locals.adsterraSocial = process.env.ADSTERRA_SOCIAL || '';
+  res.locals.adsterraPopunder = process.env.ADSTERRA_POPUNDER || '';
+  res.locals.adsterraKey = process.env.ADSTERRA_KEY || '';
   next();
 });
 
