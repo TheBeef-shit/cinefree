@@ -644,8 +644,8 @@ app.get('/watch/:id', async (req, res, next) => {
     ]);
     const imdbId = externalIds.imdb_id || '';
     const embeds = [
-      { name: 'VidStuck', url: `https://embed.vidstuck.xyz/embed/movie/${id}?back=1&branding=streamex` },
-      { name: 'ZXC Stream', url: `https://zxcstream.xyz/player/movie/${id}` },
+      { name: 'VidStuck', url: `https://embed.vidstuck.cc/embed/movie/${id}?back=1&branding=streamex` },
+      { name: 'ZXC Stream', url: `https://zxcstream.cc/player/movie/${id}` },
       { name: 'Vidsrc', url: `https://vidsrc.party/embed/movie/${id}` },
       { name: 'MultiEmbed', url: `https://multiembed.mov/?video_id=${id}&tmdb=1` },
       { name: 'SuperEmbed', url: `https://multiembed.mov/?video_id=${id}&tmdb=1&server=1` },
