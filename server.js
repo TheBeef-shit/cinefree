@@ -644,7 +644,7 @@ app.get('/watch/:id', async (req, res, next) => {
     ]);
     const imdbId = externalIds.imdb_id || '';
     const embeds = [
-      { name: 'VidStuck', url: `https://embed.vidstuck.cc/embed/movie/${id}?back=1&branding=streamex` },
+      { name: 'VidStuck', url: `https://vidstuck.cc/embed/movie/${id}?back=1&branding=streamex` },
       { name: 'ZXC Stream', url: `https://zxcstream.cc/player/movie/${id}` },
       { name: 'Vidsrc', url: `https://vidsrc.party/embed/movie/${id}` },
       { name: 'MultiEmbed', url: `https://multiembed.mov/?video_id=${id}&tmdb=1` },
@@ -708,8 +708,8 @@ app.get('/tv/watch/:id', async (req, res, next) => {
     };
     const imdbId = externalIds.imdb_id || '';
     const embeds = [
-      { name: 'VidStuck', url: `https://embed.vidstuck.xyz/embed/tv/${id}/${season}/${episode}?back=1&branding=streamex` },
-      { name: 'ZXC Stream', url: `https://zxcstream.xyz/player/tv/${id}/${season}/${episode}` },      
+      { name: 'VidStuck', url: `https://vidstuck.cc/embed/tv/${id}/${season}/${episode}?back=1&branding=streamex` },
+      { name: 'ZXC Stream', url: `https://zxcstream.cc/player/tv/${id}/${season}/${episode}` },      
       { name: 'MultiEmbed', url: `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${season}&e=${episode}` },
       { name: 'My Server', url: `https://vidsrc.party/embed/tv/${id}/${season}/${episode}` },
       { name: 'SuperEmbed', url: `https://multiembed.mov/?video_id=${id}&tmdb=1&s=${season}&e=${episode}&server=1` },
